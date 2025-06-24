@@ -41,7 +41,7 @@ const Immigrant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
-  
+
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     phoneNumber: "",
@@ -89,7 +89,7 @@ const Immigrant = () => {
       setError("Date of birth is required");
       return false;
     }
-    
+
     if (!formData.statusInCanada && formData.alreadyInCanada) {
       setError("Status in Canada is required");
       return false;
@@ -141,7 +141,10 @@ const Immigrant = () => {
       formDataToSend.append("fullName", formData.fullName);
       formDataToSend.append("DOB", formData.dateOfBirth);
       formDataToSend.append("phoneNo", formData.phoneNumber);
-      formDataToSend.append("alreadyInCanada", formData.alreadyInCanada ? "true" : "false");
+      formDataToSend.append(
+        "alreadyInCanada",
+        formData.alreadyInCanada ? "true" : "false"
+      );
       formDataToSend.append("workSchoolLocation", formData.workSchoolLocation);
       formDataToSend.append("countryOfOrigin", formData.countryOfOrigin);
       formDataToSend.append("statusInCanada", formData.statusInCanada);
@@ -265,61 +268,66 @@ const Immigrant = () => {
                   type="text"
                   value={formData.countryOfOrigin}
                   onChange={(e) =>
-                    setFormData({ ...formData, countryOfOrigin: e.target.value })
+                    setFormData({
+                      ...formData,
+                      countryOfOrigin: e.target.value,
+                    })
                   }
                 />
-                </div>
+              </div>
 
-                <div className="flex mt-2 items-center mb-4">
-                  <Label htmlFor="alreadyInCanada">Already In Canada:</Label>
-                  <Checkbox
-                    id="alreadyInCanada"
-                    className="ml-14"
-                    checked={formData.alreadyInCanada}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, alreadyInCanada: !!checked })
+              <div className="flex mt-2 items-center mb-4">
+                <Label htmlFor="alreadyInCanada">Already In Canada:</Label>
+                <Checkbox
+                  id="alreadyInCanada"
+                  className="ml-14"
+                  checked={formData.alreadyInCanada}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, alreadyInCanada: !!checked })
+                  }
+                />
+              </div>
+
+              {formData.alreadyInCanada === true && (
+                <div className="flex justify-between items-center">
+                  <Label>Status in Canada:</Label>
+                  <Select
+                    value={formData.statusInCanada}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, statusInCanada: value })
+                    }
+                  >
+                    <SelectTrigger className="w-2/3 mb-4">
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Study Permit">Study Permit</SelectItem>
+                      <SelectItem value="Work Permit">Work Permit</SelectItem>
+                      <SelectItem value="Permanent Resident">
+                        Permanent Resident
+                      </SelectItem>
+                      <SelectItem value="Citizen">Citizen</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              {formData.alreadyInCanada === true && (
+                <div className="flex justify-between items-center">
+                  <Label>School/Work Location:</Label>
+                  <Input
+                    className="w-2/3 mb-4"
+                    type="text"
+                    value={formData.workSchoolLocation}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        workSchoolLocation: e.target.value,
+                      })
                     }
                   />
                 </div>
-
-              {formData.alreadyInCanada === true && (
-              <div className="flex justify-between items-center">
-                <Label>Status in Canada:</Label>
-                <Select
-                  value={formData.statusInCanada}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, statusInCanada: value })
-                  }
-                >
-                  <SelectTrigger className="w-2/3 mb-4">
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Study Permit">Study Permit</SelectItem>
-                    <SelectItem value="Work Permit">Work Permit</SelectItem>
-                    <SelectItem value="Permanent Resident">
-                      Permanent Resident
-                    </SelectItem>
-                    <SelectItem value="Citizen">Citizen</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
               )}
-              {formData.alreadyInCanada === true && (
-              <div className="flex justify-between items-center">
-                <Label>School/Work Location:</Label>
-                <Input
-                  className="w-2/3 mb-4"
-                  type="text"
-                  value={formData.workSchoolLocation}
-                  onChange={(e) =>
-                    setFormData({ ...formData, workSchoolLocation: e.target.value })
-                  }
-                />
-                </div>
-                )}
-                
+
               <div className="flex justify-between items-center">
                 <Label>Government ID:</Label>
                 <Input
@@ -349,7 +357,7 @@ const Immigrant = () => {
                 </div>
               )}
               {success && (
-                <div className="mb-4 p-2 bg-green-100 text-green-600 rounded">
+                <div className="mb-4 p-2 bg-blue-100 text-blue-600 rounded">
                   Form submitted successfully!
                 </div>
               )}
@@ -366,14 +374,20 @@ const Immigrant = () => {
                 <strong>Country Of Origin:</strong> {formData.countryOfOrigin}
               </span>
               <span className="flex justify-between mb-1">
-                <strong>Already In Canada</strong> {formData.alreadyInCanada ? "Yes" : "No"}
+                <strong>Already In Canada</strong>{" "}
+                {formData.alreadyInCanada ? "Yes" : "No"}
               </span>
-              {formData.alreadyInCanada && ( <span className="flex justify-between mb-1">
-                <strong>Status in Canada:</strong> {formData.statusInCanada}
-              </span>)}
-              {formData.alreadyInCanada && ( <span className="flex justify-between mb-1">
-                <strong>School/Work Location:</strong> {formData.workSchoolLocation}
-              </span>)}
+              {formData.alreadyInCanada && (
+                <span className="flex justify-between mb-1">
+                  <strong>Status in Canada:</strong> {formData.statusInCanada}
+                </span>
+              )}
+              {formData.alreadyInCanada && (
+                <span className="flex justify-between mb-1">
+                  <strong>School/Work Location:</strong>{" "}
+                  {formData.workSchoolLocation}
+                </span>
+              )}
               <span className="flex justify-between mb-1">
                 <strong>Status in Canada:</strong> {formData.statusInCanada}
               </span>

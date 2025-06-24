@@ -235,7 +235,7 @@ const ViewCarListing = () => {
                     {new Date(listing.createdAt).toLocaleDateString()}
                   </p>
                 )}
-                <p className="text-2xl mt-2 text-green-600 font-bold flex items-center gap-1">
+                <p className="text-2xl mt-2 text-blue-600 font-bold flex items-center gap-1">
                   <FiDollarSign size={24} />
                   {listing.price ?? "N/A"}
                 </p>
@@ -319,7 +319,7 @@ const ViewCarListing = () => {
                   <p>{listing.dealership.phoneNo}</p>
                 </div>
                 <div className="flex items-center mb-3">
-                  <FiMail size={18} className="text-green-500 mr-2" />
+                  <FiMail size={18} className="text-blue-500 mr-2" />
                   <p>{listing.dealership.email}</p>
                 </div>
                 {listing.dealership.carDealership && (

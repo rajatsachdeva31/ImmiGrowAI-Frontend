@@ -573,7 +573,7 @@ export default function ViewUserPage() {
               </button>
               <button
                 onClick={() => handleVerifyUser(user.id)}
-                className="px-4 py-2 bg-green-600 text-white rounded"
+                className="px-4 py-2 bg-blue-600 text-white rounded"
               >
                 Verify
               </button>

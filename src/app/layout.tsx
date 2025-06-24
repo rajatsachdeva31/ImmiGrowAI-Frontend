@@ -13,10 +13,10 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "immigrateX",
-  description: "immigrateX",
+  title: "ImmiGrow",
+  description: "ImmiGrow",
   icons: {
-    icon: "/logo.svg",
+    icon: "/logo.png",
   },
 };
 
@@ -27,14 +27,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.variable} antialiased overscroll-y-none overscroll-none`}>
+      <body
+        className={`${poppins.variable} antialiased overscroll-y-none overscroll-none`}
+      >
         {/* <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         > */}
-          {children}
+        {children}
         {/* </ThemeProvider> */}
       </body>
     </html>

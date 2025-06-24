@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Bed, Bath, Clock, MapPin, DollarSign, Calendar } from "lucide-react";
 import { TbBrandSpeedtest } from "react-icons/tb";
 
-
 export default function ListingCard({ listing }) {
   const {
     id,
@@ -22,7 +21,7 @@ export default function ListingCard({ listing }) {
     mileage,
     year,
   } = listing;
-  
+
   const router = useRouter();
   const pathname = usePathname();
 
@@ -84,16 +83,19 @@ export default function ListingCard({ listing }) {
       <div className="w-2/3 p-2 flex flex-col justify-between">
         <CardHeader className="p-0">
           <div className="flex items-center justify-between">
-          {title && <p className="text-xl font-bold truncate w-30">{title}</p>}
+            {title && (
+              <p className="text-xl font-bold truncate w-30">{title}</p>
+            )}
             {make && model && (
-        <p className="text-xl font-bold">{model} {make} 
-        </p>
-      )}
+              <p className="text-xl font-bold">
+                {model} {make}
+              </p>
+            )}
           </div>
 
           {/* Price */}
-          <p className="text-xl font-bold text-green-600 flex items-center">
-            <DollarSign className="h-5 w-5 text-green-600 mr-1" />
+          <p className="text-xl font-bold text-blue-600 flex items-center">
+            <DollarSign className="h-5 w-5 text-blue-600 mr-1" />
             {price.toLocaleString()}
           </p>
 

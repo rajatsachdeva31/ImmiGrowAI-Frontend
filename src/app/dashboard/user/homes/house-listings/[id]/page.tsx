@@ -253,7 +253,7 @@ const ViewListing = () => {
                 <h1 className="text-3xl font-semibold flex items-center gap-2">
                   {listing.title ?? "Untitled"}
                 </h1>
-                <p className="text-2xl mt-2 text-green-600 font-bold flex items-center gap-2">
+                <p className="text-2xl mt-2 text-blue-600 font-bold flex items-center gap-2">
                   <FiDollarSign size={24} />
                   {listing.price ?? "N/A"}
                 </p>
@@ -348,7 +348,7 @@ const ViewListing = () => {
                 )}
                 {listing.landlord.email && (
                   <div className="flex items-center gap-2 mb-3">
-                    <FiMail size={18} className="text-green-500" />
+                    <FiMail size={18} className="text-blue-500" />
                     <p>{listing.landlord.email}</p>
                   </div>
                 )}

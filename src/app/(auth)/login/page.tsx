@@ -283,9 +283,9 @@ const Login = () => {
               {error && <p className="text-red-500 text-sm">{error}</p>} */}
               <Button
                 className={
-                  "bg-green-600 hover:bg-green-500 w-full mb-4" +
+                  "bg-blue-600 hover:bg-blue-500 w-full mb-4" +
                   (loading
-                    ? " cursor-not-allowed bg-green-300 hover:bg-green-300"
+                    ? " cursor-not-allowed bg-blue-300 hover:bg-blue-300"
                     : "")
                 }
                 onClick={(e) => handleLogin(e)}
@@ -296,7 +296,7 @@ const Login = () => {
                 Forgot Password?{" "}
                 <Link
                   href={"/forgot-password"}
-                  className="font-bold text-green-600 hover:text-green-500"
+                  className="font-bold text-blue-600 hover:text-blue-500"
                 >
                   Reset
                 </Link>
@@ -331,7 +331,7 @@ const Login = () => {
               <p className="text-md mt-6 pt-6 border-t">
                 Don&apos;t have an account?{" "}
                 <Link
-                  className="text-green-600 hover:text-green-500 font-semibold"
+                  className="text-blue-600 hover:text-blue-500 font-semibold"
                   href="/signup"
                 >
                   Sign up
@@ -340,7 +340,7 @@ const Login = () => {
             </div>
           </div>
         </div>
-        <div className="relative w-1/2 p-12 bg-green-600 md:flex flex-col justify-between hidden">
+        <div className="relative w-1/2 p-12 bg-blue-600 md:flex flex-col justify-between hidden">
           <Image
             src={"/login.jpg"}
             alt="signup"

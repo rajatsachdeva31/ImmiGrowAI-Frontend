@@ -11,13 +11,13 @@ export default function Footer() {
       <div className="flex justify-evenly flex-wrap">
         <div className="flex flex-col">
           <Logo path="/" />
-          <p className="text-sm mt-2">&copy; 2025 ImmigrateX.A.I</p>
+          <p className="text-sm mt-2">&copy; 2025 ImmiGrow.A.I</p>
           <p className="text-sm">Edmonton, Alberta, Canada</p>
         </div>
         <div>
           <div className="flex justify-center mt-4 space-x-4">
             <Link
-              href="https://www.linkedin.com/showcase/immigratex-a-i/"
+              href="https://www.linkedin.com/showcase/ImmiGrow-a-i/"
               aria-label="Linkedin"
             >
               <IoLogoLinkedin size={30} />
@@ -34,7 +34,7 @@ export default function Footer() {
       <div className="mt-6 px-4 text-sm">
         <p className="font-semibold">Land Acknowledgment</p>
         <p className="mt-2 md:px-40">
-          At ImmigrateX.ai, we acknowledge that we operate on the traditional
+          At ImmiGrow.ai, we acknowledge that we operate on the traditional
           territories of Indigenous Peoples across Canada. We honor the rich
           history, culture, and contributions of First Nations, Métis, and Inuit
           communities. We are committed to fostering respectful relationships

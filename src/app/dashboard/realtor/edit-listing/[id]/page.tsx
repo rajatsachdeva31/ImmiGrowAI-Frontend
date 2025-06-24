@@ -97,7 +97,9 @@ const EditHouseListing = () => {
   }, [id, endpoint]);
 
   // Update form values
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -136,8 +138,15 @@ const EditHouseListing = () => {
       return false;
     }
     if (formData.openhouse) {
-      if (!formData.startDate || !formData.endDate || !formData.startTime || !formData.endTime) {
-        setErrorMessage("Start and end date, and time are required for open house.");
+      if (
+        !formData.startDate ||
+        !formData.endDate ||
+        !formData.startTime ||
+        !formData.endTime
+      ) {
+        setErrorMessage(
+          "Start and end date, and time are required for open house."
+        );
         return false;
       }
       if (new Date(formData.startDate) > new Date(formData.endDate)) {
@@ -158,8 +167,11 @@ const EditHouseListing = () => {
     if (!validateForm()) return;
 
     try {
-      const tokenResponse = await fetch(`${endpoint}auth/token`, { credentials: "include" });
-      if (!tokenResponse.ok) throw new Error("Failed to get authentication token");
+      const tokenResponse = await fetch(`${endpoint}auth/token`, {
+        credentials: "include",
+      });
+      if (!tokenResponse.ok)
+        throw new Error("Failed to get authentication token");
       const tokenData = await tokenResponse.json();
       const token = tokenData.token;
 
@@ -373,12 +385,16 @@ const EditHouseListing = () => {
               </div>
             </div>
 
-            {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
-            {successMessage && <p className="text-green-500 mt-4">{successMessage}</p>}
+            {errorMessage && (
+              <p className="text-red-500 mt-4">{errorMessage}</p>
+            )}
+            {successMessage && (
+              <p className="text-blue-500 mt-4">{successMessage}</p>
+            )}
 
             <Button
               type="submit"
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 mt-4"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 mt-4"
             >
               Update Listing
             </Button>

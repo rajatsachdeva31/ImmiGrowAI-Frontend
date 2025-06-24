@@ -184,67 +184,67 @@ const EditCarListing = () => {
           Back to Listings
         </Button>
       </Link>
-    <Card className="shadow-lg p-6">
-      <h1 className="text-2xl font-bold mb-6">Edit Car Listing</h1>
-      <form onSubmit={handleSubmit}>
-        {Object.keys(formData).map(
-          (key) =>
-            // Exclude fields not intended for editing
-            !["id", "dealership", "createdAt", "carImages"].includes(key) && (
-              <div key={key} className="mb-4">
-                <label className="block font-semibold mb-2 capitalize">
-                  {key.replace(/([A-Z])/g, " $1")}
-                </label>
-                <input
-                  type="text"
-                  name={key}
-                  value={formData[key as keyof typeof formData]}
-                  onChange={handleChange}
-                  className="w-full border rounded p-2"
-                />
-              </div>
-            )
-        )}
+      <Card className="shadow-lg p-6">
+        <h1 className="text-2xl font-bold mb-6">Edit Car Listing</h1>
+        <form onSubmit={handleSubmit}>
+          {Object.keys(formData).map(
+            (key) =>
+              // Exclude fields not intended for editing
+              !["id", "dealership", "createdAt", "carImages"].includes(key) && (
+                <div key={key} className="mb-4">
+                  <label className="block font-semibold mb-2 capitalize">
+                    {key.replace(/([A-Z])/g, " $1")}
+                  </label>
+                  <input
+                    type="text"
+                    name={key}
+                    value={formData[key as keyof typeof formData]}
+                    onChange={handleChange}
+                    className="w-full border rounded p-2"
+                  />
+                </div>
+              )
+          )}
 
-        <div className="mb-4">
-          <label className="block font-semibold mb-2">Add Images</label>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleFileChange}
-            className="w-full border rounded p-2"
-          />
-          <div className="flex flex-wrap gap-4 mt-4">
-            {existingImages.map((image, index) => (
-              <div key={index} className="relative">
-                <img
-                  src={image}
-                  alt={`Car Image ${index}`}
-                  className="w-24 h-24 object-cover rounded"
-                />
-                <button
-                  type="button"
-                  className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded"
-                  onClick={() => removeImage(index)}
-                >
-                  &times;
-                </button>
-              </div>
-            ))}
+          <div className="mb-4">
+            <label className="block font-semibold mb-2">Add Images</label>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full border rounded p-2"
+            />
+            <div className="flex flex-wrap gap-4 mt-4">
+              {existingImages.map((image, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={image}
+                    alt={`Car Image ${index}`}
+                    className="w-24 h-24 object-cover rounded"
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded"
+                    onClick={() => removeImage(index)}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <Button
-          type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500 mt-3"
-        >
-          Update Listing
-        </Button>
-      </form>
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-      {successMessage && <p className="text-green-500">{successMessage}</p>}
-    </Card>
+          <Button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 mt-3"
+          >
+            Update Listing
+          </Button>
+        </form>
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {successMessage && <p className="text-blue-500">{successMessage}</p>}
+      </Card>
     </div>
   );
 };

@@ -176,7 +176,7 @@ const BookingTable = () => {
                     {booking.status !== "completed" && (
                       <Button
                         onClick={() => markAsComplete(booking.id, "house")}
-                        className="bg-green-600 hover:bg-green-500"
+                        className="bg-blue-600 hover:bg-blue-500"
                       >
                         Mark as Complete
                       </Button>
@@ -237,7 +237,7 @@ const BookingTable = () => {
                     {booking.status !== "completed" && (
                       <Button
                         onClick={() => markAsComplete(booking.id, "car")}
-                        className="bg-green-600 hover:bg-green-500"
+                        className="bg-blue-600 hover:bg-blue-500"
                       >
                         Mark as Complete
                       </Button>
@@ -288,7 +288,7 @@ const BookingTable = () => {
                     {booking.status !== "completed" && (
                       <Button
                         onClick={() => markAsComplete(booking.id, "consultant")}
-                        className="bg-green-600 hover:bg-green-500"
+                        className="bg-blue-600 hover:bg-blue-500"
                       >
                         Mark as Complete
                       </Button>

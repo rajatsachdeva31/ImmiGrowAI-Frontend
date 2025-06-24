@@ -88,16 +88,16 @@ const ConsultantCarousel = ({ consultants }) => {
         <div key={consultant.id} className="p-2">
           <div className="rounded-2xl overflow-hidden shadow-md bg-white text-center">
             {/* Top bar with gradient */}
-            <div className="relative bg-gradient-to-r from-green-600 to-green-400 h-20 flex justify-center items-end rounded-t-2xl">
+            <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 h-20 flex justify-center items-end rounded-t-2xl">
               {/* User Icon inside circle */}
               <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg -mb-8">
-                <User className="w-8 h-8 text-green-600" />
+                <User className="w-8 h-8 text-blue-600" />
               </div>
             </div>
 
             {/* Info below icon */}
             <div className="pt-10 px-4 pb-6">
-              <p className="text-sm font-semibold text-green-600 uppercase tracking-wide">
+              <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
                 {consultant.user?.fullName || "Unknown Consultant"}
               </p>
               <p className="text-sm text-gray-600">
@@ -112,7 +112,7 @@ const ConsultantCarousel = ({ consultants }) => {
 
               <div className="mt-4 space-y-2">
                 <Button
-                  className="w-full bg-green-600 hover:bg-green-500"
+                  className="w-full bg-blue-600 hover:bg-blue-500"
                   onClick={() => openModal(consultant)}
                 >
                   View Details

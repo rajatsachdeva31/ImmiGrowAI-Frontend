@@ -65,8 +65,8 @@ const Onboarding = () => {
           </Select>
           <Button
             className={
-              "bg-green-600 hover:bg-green-500 w-full mb-4" +
-              (loading ? " cursor-not-allowed bg-green-300" : "")
+              "bg-blue-600 hover:bg-blue-500 w-full mb-4" +
+              (loading ? " cursor-not-allowed bg-blue-300" : "")
             }
             onClick={handleSubmit}
             disabled={loading}

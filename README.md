@@ -1,10 +1,10 @@
-# Frontend for ImmigrateX.ai
+# Frontend for ImmiGrow.ai
 
-Welcome to the frontend repository of **ImmigrateX.ai**! This project aims to provide a seamless user experience for individuals navigating the immigration process to Canada, the U.S., and the U.K. through AI-driven solutions.
+Welcome to the frontend repository of **ImmiGrow.ai**! This project aims to provide a seamless user experience for individuals navigating the immigration process to Canada, the U.S., and the U.K. through AI-driven solutions.
 
 ## Table of Contents
 
-1. [About ImmigrateX.ai](#about-immigratexai)
+1. [About ImmiGrow.ai](#about-immigratexai)
 2. [Features](#features)
 3. [Tech Stack](#tech-stack)
 4. [Getting Started](#getting-started)
@@ -12,9 +12,9 @@ Welcome to the frontend repository of **ImmigrateX.ai**! This project aims to pr
 
 ---
 
-## About ImmigrateX.ai
+## About ImmiGrow.ai
 
-**ImmigrateX.ai** is a platform that:
+**ImmiGrow.ai** is a platform that:
 
 - Assists individuals from countries such as India, the Philippines, Sri Lanka, Bangladesh, Pakistan, Nigeria, Cameroon, and Eritrea.
 - Provides services to apply for work permits, study permits, and permanent residency without traditional immigration agents.
@@ -105,7 +105,7 @@ Our mission is to make immigration processes accessible, cost-effective, and eff
 ## Folder Structure
 
 ```
-frontend-immigratex/
+frontend-ImmiGrow/
 ├── public/         # Static files and assets
 ├── src/
    ├── app/         # Application files
@@ -118,4 +118,4 @@ frontend-immigratex/
 
 ### Contact
 
-For questions, feedback, or support, please contact us at [support@immigratex.ai](mailto:admin@immigratex.ai).
+For questions, feedback, or support, please contact us at [support@ImmiGrow.ai](mailto:admin@ImmiGrow.ai).

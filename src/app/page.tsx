@@ -34,13 +34,13 @@ export default function LandingPage() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative overflow-hidden bg-white py-20 md:py-12">
-          <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-white z-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-white z-0"></div>
           <div className="container relative z-10 mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="flex m-3 flex-col gap-6">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
                   Your New Life{" "}
-                  <span className="text-green-500">Starts Here</span>
+                  <span className="text-blue-500">Starts Here</span>
                 </h1>
                 <p className="text-xl text-gray-600">
                   AI-powered help for housing, cars, and immigration support —
@@ -48,10 +48,7 @@ export default function LandingPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 mt-4">
                   <Link href={"/signup"}>
-                    <Button
-                      size="lg"
-                      className="bg-green-500 hover:bg-green-600"
-                    >
+                    <Button size="lg" className="bg-blue-500 hover:bg-blue-600">
                       Start Planning
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -66,7 +63,7 @@ export default function LandingPage() {
               <div className="relative h-[600px] w-full ">
                 <Image
                   src="/landing-1.png"
-                  alt="ImmigrateX Hero Image"
+                  alt="ImmiGrow Hero Image"
                   fill
                   // className="object-cover"
                   priority
@@ -93,8 +90,8 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
                 <CardHeader className="pb-2">
-                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                    <Home className="h-6 w-6 text-green-500" />
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                    <Home className="h-6 w-6 text-blue-500" />
                   </div>
                   <CardTitle>Housing</CardTitle>
                 </CardHeader>
@@ -108,8 +105,8 @@ export default function LandingPage() {
 
               <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
                 <CardHeader className="pb-2">
-                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                    <Car className="h-6 w-6 text-green-500" />
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                    <Car className="h-6 w-6 text-blue-500" />
                   </div>
                   <CardTitle>Cars</CardTitle>
                 </CardHeader>
@@ -123,8 +120,8 @@ export default function LandingPage() {
 
               <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
                 <CardHeader className="pb-2">
-                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                    <MessageSquare className="h-6 w-6 text-green-500" />
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                    <MessageSquare className="h-6 w-6 text-blue-500" />
                   </div>
                   <CardTitle>Consultants</CardTitle>
                 </CardHeader>
@@ -138,8 +135,8 @@ export default function LandingPage() {
 
               <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
                 <CardHeader className="pb-2">
-                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                    <Globe className="h-6 w-6 text-green-500" />
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                    <Globe className="h-6 w-6 text-blue-500" />
                   </div>
                   <CardTitle>Smart Planner</CardTitle>
                 </CardHeader>
@@ -159,7 +156,7 @@ export default function LandingPage() {
           <div className="container mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                How ImmigrateX Works
+                How ImmiGrow Works
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 Our AI-powered platform simplifies your immigration journey in
@@ -195,7 +192,7 @@ export default function LandingPage() {
                   key={index}
                   className="relative flex flex-col items-center text-center p-6"
                 >
-                  <div className="w-16 h-16 rounded-full bg-green-500 text-white flex items-center justify-center text-2xl font-bold mb-6">
+                  <div className="w-16 h-16 rounded-full bg-blue-500 text-white flex items-center justify-center text-2xl font-bold mb-6">
                     {step.number}
                   </div>
                   <h3 className="text-xl font-bold mb-3">{step.title}</h3>
@@ -203,7 +200,7 @@ export default function LandingPage() {
 
                   {index < 2 && (
                     <div className="hidden md:block absolute top-1/4 right-0 transform translate-x-1/2">
-                      <ChevronRight className="h-8 w-8 text-green-300" />
+                      <ChevronRight className="h-8 w-8 text-blue-300" />
                     </div>
                   )}
                 </div>
@@ -220,7 +217,7 @@ export default function LandingPage() {
                 Built for Every Immigrant Journey
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                No matter your situation, ImmigrateX has the tools and resources
+                No matter your situation, ImmiGrow has the tools and resources
                 you need.
               </p>
             </div>
@@ -253,7 +250,7 @@ export default function LandingPage() {
                   description:
                     "Connect with newcomers looking for your services.",
                   icon: Home,
-                  color: "bg-green-100",
+                  color: "bg-blue-100",
                 },
               ].map((segment, index) => (
                 <Card
@@ -264,7 +261,7 @@ export default function LandingPage() {
                     <div
                       className={`w-12 h-12 rounded-full ${segment.color} flex items-center justify-center mb-4`}
                     >
-                      <segment.icon className="h-6 w-6 text-green-500" />
+                      <segment.icon className="h-6 w-6 text-blue-500" />
                     </div>
                     <CardTitle>{segment.title}</CardTitle>
                   </CardHeader>
@@ -275,7 +272,7 @@ export default function LandingPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="text-green-500 border-green-500 hover:bg-green-50"
+                      className="text-blue-500 border-blue-500 hover:bg-blue-50"
                     >
                       Get Started
                     </Button>
@@ -295,7 +292,7 @@ export default function LandingPage() {
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 Hear from people who&apos;ve successfully started their new
-                lives with ImmigrateX.
+                lives with ImmiGrow.
               </p>
             </div>
 
@@ -305,21 +302,21 @@ export default function LandingPage() {
                   name: "Sarah Chen",
                   location: "From China to Canada",
                   quote:
-                    "ImmigrateX helped me find a perfect apartment and a reliable car within days of arriving. The consultant they matched me with made my visa process so much easier.",
+                    "ImmiGrow helped me find a perfect apartment and a reliable car within days of arriving. The consultant they matched me with made my visa process so much easier.",
                   rating: 5,
                 },
                 {
                   name: "Miguel Rodriguez",
                   location: "From Mexico to USA",
                   quote:
-                    "As a student, I was worried about finding affordable housing. ImmigrateX not only found me a great place but also connected me with other students from my country.",
+                    "As a student, I was worried about finding affordable housing. ImmiGrow not only found me a great place but also connected me with other students from my country.",
                   rating: 5,
                 },
                 {
                   name: "Priya Sharma",
                   location: "From India to Australia",
                   quote:
-                    "Moving with my family was stressful until we found ImmigrateX. Their AI recommendations were spot-on for our needs, and we felt at home right away.",
+                    "Moving with my family was stressful until we found ImmiGrow. Their AI recommendations were spot-on for our needs, and we felt at home right away.",
                   rating: 4,
                 },
               ].map((testimonial, index) => (
@@ -339,8 +336,8 @@ export default function LandingPage() {
                       {testimonial.quote}
                     </p>
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                        <span className="text-green-500 font-bold">
+                      <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                        <span className="text-blue-500 font-bold">
                           {testimonial.name
                             .split(" ")
                             .map((n) => n[0])
@@ -361,15 +358,15 @@ export default function LandingPage() {
 
             <div className="flex justify-center gap-12 flex-wrap">
               <div className="text-center">
-                <p className="text-4xl font-bold text-green-500">5,000+</p>
+                <p className="text-4xl font-bold text-blue-500">5,000+</p>
                 <p className="text-gray-600">Users Onboarded</p>
               </div>
               <div className="text-center">
-                <p className="text-4xl font-bold text-green-500">12+</p>
+                <p className="text-4xl font-bold text-blue-500">12+</p>
                 <p className="text-gray-600">Countries Served</p>
               </div>
               <div className="text-center">
-                <p className="text-4xl font-bold text-green-500">4.9/5</p>
+                <p className="text-4xl font-bold text-blue-500">4.9/5</p>
                 <p className="text-gray-600">Average Rating</p>
               </div>
             </div>
@@ -377,7 +374,7 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Banner */}
-        <section className="py-16 bg-green-500 text-white">
+        <section className="py-16 bg-blue-500 text-white">
           <div className="container mx-auto">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -390,7 +387,7 @@ export default function LandingPage() {
               <Link href={"/signup"}>
                 <Button
                   size="lg"
-                  className="bg-white text-green-500 hover:bg-gray-100"
+                  className="bg-white text-blue-500 hover:bg-gray-100"
                 >
                   Start Now — It&apos;s Free
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -443,7 +440,7 @@ export default function LandingPage() {
                     />
                   </div>
 
-                  <Button className="w-full bg-green-500 hover:bg-green-600">
+                  <Button className="w-full bg-blue-500 hover:bg-blue-600">
                     Send Message
                   </Button>
                 </form>
@@ -452,7 +449,7 @@ export default function LandingPage() {
               <div className="relative h-[500px] w-full ">
                 <Image
                   src="/landing-2.jpg"
-                  alt="Contact ImmigrateX"
+                  alt="Contact ImmiGrow"
                   fill
                   className="object-cover"
                 />

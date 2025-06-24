@@ -164,7 +164,7 @@ const Signup = () => {
 
   return (
     <div className="h-full md:flex">
-      <div className="w-1/2  bg-green-600 md:flex flex-col justify-between hidden">
+      <div className="w-1/2  bg-blue-600 md:flex flex-col justify-between hidden">
         <div className="relative h-full flex flex-col items-center justify-center">
           {/* ✅ Background Image with Overlay */}
           <div className="absolute inset-0 opacity-50">
@@ -200,9 +200,9 @@ const Signup = () => {
             />
             <Button
               className={
-                "bg-green-600 hover:bg-green-500 w-full mb-4" +
+                "bg-blue-600 hover:bg-blue-500 w-full mb-4" +
                 (loading
-                  ? " cursor-not-allowed bg-green-300 hover:bg-green-300"
+                  ? " cursor-not-allowed bg-blue-300 hover:bg-blue-300"
                   : "")
               }
               onClick={(e) => handleSignup(e)}
@@ -244,7 +244,7 @@ const Signup = () => {
             <p className="text-md mt-6 pt-6 border-t">
               Already have an account?{" "}
               <Link
-                className="text-green-600 hover:text-green-500 font-semibold"
+                className="text-blue-600 hover:text-blue-500 font-semibold"
                 href="/login"
               >
                 Login

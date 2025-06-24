@@ -105,7 +105,7 @@ export default function AdminDashboard() {
       ? stats.verificationPieChart.map((item, index) => ({
           name: item.label,
           value: item.value,
-          fill: ["#34D399", "#ff5733"][index % 2], // Green for Verified, Red for Unverified
+          fill: ["#34D399", "#ff5733"][index % 2], // blue for Verified, Red for Unverified
         }))
       : [];
 

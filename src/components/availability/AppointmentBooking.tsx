@@ -174,7 +174,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
             <div
               key={slot.id}
               className={`p-5 border rounded-lg shadow-md flex flex-col ${
-                selectedSlot === slot.id ? "bg-green-100" : "bg-white"
+                selectedSlot === slot.id ? "bg-blue-100" : "bg-white"
               } transition-transform hover:scale-105`}
             >
               <div className="flex items-center space-x-3 mb-3">
@@ -202,7 +202,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
               </div>
 
               <Button
-                className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg flex items-center justify-center"
+                className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center"
                 onClick={() => handleBookAppointment(slot.id, listingId)}
                 disabled={isAppointmentBooked === slot.id}
               >

@@ -168,7 +168,7 @@ export default function VerifyUsersPage() {
       cell: ({ row }) => (
         <div
           className={`font-bold ${
-            row.getValue("userVerified") ? "text-green-600" : "text-red-600"
+            row.getValue("userVerified") ? "text-blue-600" : "text-red-600"
           }`}
         >
           {row.getValue("userVerified") ? "Yes" : "No"}

@@ -72,9 +72,9 @@ const ForgotPassword = () => {
             />
             <Button
               className={
-                "bg-green-600 hover:bg-green-500 w-full mb-4" +
+                "bg-blue-600 hover:bg-blue-500 w-full mb-4" +
                 (loading
-                  ? " cursor-not-allowed bg-green-300 hover:bg-green-300"
+                  ? " cursor-not-allowed bg-blue-300 hover:bg-blue-300"
                   : "")
               }
               onClick={(e) => handleForgotPassword(e)}
@@ -85,7 +85,7 @@ const ForgotPassword = () => {
             <p className="text-md mt-6 pt-6 border-t">
               Remember Password?{" "}
               <Link
-                className="text-green-600 hover:text-green-500 font-semibold"
+                className="text-blue-600 hover:text-blue-500 font-semibold"
                 href="/login"
               >
                 Login

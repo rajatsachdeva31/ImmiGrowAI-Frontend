@@ -38,7 +38,7 @@ export default function Header() {
         {/* Right Actions */}
         <div className="hidden md:flex items-center gap-4">
           {/* <ThemeSwitcher /> */}
-          <Button className="bg-green-600 hover:bg-green-500">
+          <Button className="bg-blue-600 hover:bg-blue-500">
             <Link href={isProtectedPath ? "/login" : "/login"}>
               {isProtectedPath ? "Logout" : "Login"}
             </Link>
@@ -64,7 +64,7 @@ export default function Header() {
           )}
           <div className="flex flex-col items-center gap-4 mt-4">
             <ThemeSwitcher />
-            <Button className="bg-green-600 hover:bg-green-500">
+            <Button className="bg-blue-600 hover:bg-blue-500">
               <Link href={isProtectedPath ? "/logout" : "/login"}>
                 {isProtectedPath ? "Logout" : "Login"}
               </Link>

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { VideoIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useState } from "react";
+import { VideoIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Meeting {
   id: number;
@@ -24,7 +24,6 @@ const UpcomingConsultantMeetings = () => {
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-
         const tokenResponse = await fetch(`${endpoint}auth/token`, {
           credentials: "include",
         });
@@ -33,19 +32,22 @@ const UpcomingConsultantMeetings = () => {
         }
         const tokenData = await tokenResponse.json();
         const token = tokenData?.token;
-        const res = await fetch(`${endpoint}api/protected/consultants/upcoming`, {
-          credentials: 'include',
-          headers: {
-            'Authorization': `Bearer ${token}`
+        const res = await fetch(
+          `${endpoint}api/protected/consultants/upcoming`,
+          {
+            credentials: "include",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
         const data = await res.json();
 
         if (data.success) {
           setMeetings(data.meetings);
         }
       } catch (err) {
-        console.error('Failed to fetch upcoming meetings:', err);
+        console.error("Failed to fetch upcoming meetings:", err);
       } finally {
         setLoading(false);
       }
@@ -66,29 +68,27 @@ const UpcomingConsultantMeetings = () => {
         >
           {/* Blue circular icon */}
           <a href={meeting.meetLink} target="_blank" rel="noopener noreferrer">
-          <div className="flex items-center justify-center w-20 h-24 mr-2 bg-green-500 hover:bg-green-600 text-white border">
-            
-            
-            <VideoIcon className="w-8 h-8" />
-              
-          </div>
+            <div className="flex items-center justify-center w-20 h-24 mr-2 bg-blue-500 hover:bg-blue-600 text-white border">
+              <VideoIcon className="w-8 h-8" />
+            </div>
           </a>
 
           {/* Info section */}
           <div className="flex-1 ml-2">
             <p className="text-sm font-semibold text-gray-800">
-             {meeting.user.fullName}
+              {meeting.user.fullName}
             </p>
             <p className="text-sm text-gray-600">
-            {new Date(meeting.startDate).toDateString()}
+              {new Date(meeting.startDate).toDateString()}
             </p>
             <p className="text-sm text-gray-600">
-              {new Date(meeting.startDate).toLocaleTimeString()} – {new Date(meeting.endDate).toLocaleTimeString()}
+              {new Date(meeting.startDate).toLocaleTimeString()} –{" "}
+              {new Date(meeting.endDate).toLocaleTimeString()}
             </p>
             {/* <Button
               asChild
               size="sm"
-              className="mt-2 bg-green-600 hover:bg-green-500"
+              className="mt-2 bg-blue-600 hover:bg-blue-500"
             >
               <a href={meeting.meetLink} target="_blank" rel="noopener noreferrer">
                 Join Meeting
