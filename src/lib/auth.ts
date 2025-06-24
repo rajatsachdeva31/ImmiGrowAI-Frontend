@@ -1,23 +1,54 @@
-import { cookies } from 'next/headers'
+import { createClient } from './supabase/client'
 
 export async function getSession() {
-  const endpoint = process.env.NEXT_PUBLIC_API_URL;
-  
   try {
-    const cookieHeader = await cookies()
-    const tokenResponse = await fetch(`${endpoint}auth/token`, {
-      credentials: 'include',
-      headers: {
-        Cookie: cookieHeader.toString()
-      }
-    })
+    const supabase = createClient()
+    const { data: { session }, error } = await supabase.auth.getSession()
     
-    if (!tokenResponse.ok) {
+    if (error || !session) {
       return null
     }
 
-    const tokenData = await tokenResponse.json()
-    return tokenData.token ? { token: tokenData.token } : null
+    return {
+      user: session.user,
+      token: session.access_token,
+      expires_at: session.expires_at
+    }
+  } catch {
+    return null
+  }
+}
+
+export async function getUserProfile() {
+  try {
+    const supabase = createClient()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    
+    if (userError || !user) {
+      return null
+    }
+
+    // Get user profile from our database
+    const { data: profile, error: profileError } = await supabase
+      .from('users')
+      .select(`
+        *,
+        role:roles(*)
+      `)
+      .eq('email', user.email)
+      .single()
+
+    if (profileError) {
+      return { 
+        user, 
+        profile: null 
+      }
+    }
+
+    return { 
+      user, 
+      profile 
+    }
   } catch {
     return null
   }

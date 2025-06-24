@@ -39,7 +39,7 @@ export type User = {
   email: string;
   phoneNo: string;
   DOB: string;
-  firebaseUid: string;
+  id: string;
   userVerified: boolean;
   statusInCanada: string | null;
   role: { name: string };

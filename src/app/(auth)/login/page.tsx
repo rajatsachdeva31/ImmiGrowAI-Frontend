@@ -7,9 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import CryptoJS from "crypto-js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { initializeApp } from "firebase/app";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
@@ -20,18 +18,10 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import Cookies from "js-cookie";
 import Image from "next/image";
+import { createClient } from "@/lib/supabase/client";
 
-// Define the UserData interface for checking user verification
-interface UserData {
-  emailVerified: boolean;
-  userVerified: boolean;
-  onboarded: boolean;
-  userRole?: string;
-}
-
-const endpoint = process.env.NEXT_PUBLIC_API_URL;
+// Removed unused UserData interface
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -40,59 +30,51 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  // const [token, setToken] = useState("");
   const { toast } = useToast();
 
   const router = useRouter();
-  const secret = process.env.NEXT_PUBLIC_SECRET_KEY;
 
-  function encryptPassword(password: string) {
-    if (!secret) {
-      throw new Error("Secret key is not defined");
-    }
-    const iv = CryptoJS.lib.WordArray.random(16).toString(); // Random IV
-    const encrypted = CryptoJS.AES.encrypt(
-      password,
-      CryptoJS.enc.Utf8.parse(secret),
-      {
-        iv: CryptoJS.enc.Hex.parse(iv),
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-      }
-    );
-    return {
-      encryptedData: encrypted.ciphertext.toString(CryptoJS.enc.Base64),
-      iv: iv,
-    };
-  }
 
-  const checkUserVerification = (data: UserData) => {
-    if (data.onboarded === false) {
+  const checkUserVerification = async (userEmail: string) => {
+    const supabase = createClient();
+    
+    // Get user profile from our database
+    const { data: profile, error } = await supabase
+      .from('users')
+      .select(`
+        *,
+        role:roles(*)
+      `)
+      .eq('email', userEmail)
+      .single();
+
+    if (error || !profile) {
+      // User not in our system yet - needs onboarding
       router.push("/onboarding");
       return false;
-    } else if (!data.userVerified) {
+    }
+
+    if (!profile.user_verified) {
       router.push("/dashboard/not-verified?reason=user");
       return false;
-    } else {
-      if (data.userRole === "Car Dealership") {
-        router.push("/dashboard/car-dealer");
-        return false;
-      } else if (data.userRole === "Immigrant") {
-        router.push("/dashboard/user");
-        return false;
-      } else if (data.userRole === "Realtor") {
-        router.push("/dashboard/realtor");
-        return false;
-      } else if (data.userRole === "Immigration Consultant") {
-        router.push("/dashboard/consultant");
-        return false;
-      } else if (data.userRole === "Admin") {
-        router.push("/dashboard/admin");
-        return false;
-      }
-
-      return true;
     }
+
+    // Route based on role
+    if (profile.role?.name === "Car Dealership") {
+      router.push("/dashboard/car-dealer");
+    } else if (profile.role?.name === "Immigrant") {
+      router.push("/dashboard/user");
+    } else if (profile.role?.name === "Realtor") {
+      router.push("/dashboard/realtor");
+    } else if (profile.role?.name === "Immigration Consultant") {
+      router.push("/dashboard/consultant");
+    } else if (profile.role?.name === "Admin") {
+      router.push("/dashboard/admin");
+    } else {
+      router.push("/dashboard");
+    }
+
+    return true;
   };
 
   const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -120,39 +102,34 @@ const Login = () => {
       return;
     }
 
-    const { encryptedData, iv } = encryptPassword(password);
-
     try {
-      const response = await fetch(`${endpoint}api/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ email, password: encryptedData, iv }),
+      const supabase = createClient();
+      
+      // Sign in with Supabase
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (data.emailVerified == false) {
+      if (error) {
+        if (error.message.includes('Email not confirmed')) {
           setError("Please verify your email first");
-          // setToken(data.token);
           setShowDialog(true);
           return;
         }
-        setError(data.error || "Failed to login");
+        setError(error.message || "Failed to login");
         return;
       }
 
-      if (data.emailVerified == true) {
+      if (authData.user && authData.user.email_confirmed_at) {
         if (rememberMe) {
-          localStorage.setItem("email", data.email);
+          localStorage.setItem("email", email);
         }
-        if (!checkUserVerification(data)) return;
-        router.push("/dashboard");
+        
+        await checkUserVerification(authData.user.email!);
       } else {
-        setError(data.message || "Failed to login");
+        setError("Please verify your email before logging in");
+        setShowDialog(true);
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -164,27 +141,22 @@ const Login = () => {
 
   const handleResendEmail = async () => {
     try {
-      await fetch(`${endpoint}api/users/refresh-token`, {
-        method: "POST",
-        credentials: "include",
+      const supabase = createClient();
+      
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
       });
-      const tokenResponse = await fetch(`${endpoint}auth/token`, {
-        credentials: "include",
-      });
-      if (!tokenResponse.ok)
-        throw new Error("Failed to get authentication token");
 
-      const tokenData = await tokenResponse.json();
-      const token = tokenData?.token;
-      if (!token) throw new Error("Invalid authentication token");
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
 
-      await fetch(`${endpoint}api/users/resend-verification`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
       toast({
         title: "Verification email sent",
         description: "Please check your email to verify your account",
@@ -192,182 +164,203 @@ const Login = () => {
       setShowDialog(false);
     } catch (error) {
       console.error("Failed to resend email:", error);
+      toast({
+        title: "Error",
+        description: "Failed to resend verification email",
+        variant: "destructive",
+      });
     }
   };
 
-  const firebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
-    projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
-  };
-
-  const app = initializeApp(firebaseConfig);
-
   const handleGoogleLogin = async () => {
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    const rememberMe = false;
-
     setLoading(true);
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const refreshToken = await result.user.refreshToken;
-      const idToken = await result.user.getIdToken();
+    setError("");
 
-      const response = await fetch(`${endpoint}api/users/google-signin`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ idToken, refreshToken, rememberMe }),
+    try {
+      const supabase = createClient();
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
       });
 
-      const data = await response.json();
-
-      if (data) {
-        localStorage.setItem("token", idToken);
-        if (!checkUserVerification(data)) return;
-        router.push("/dashboard");
-      } else {
-        setError(data.message || "Google Sign-In failed");
+      if (error) {
+        setError(error.message || "Failed to login with Google");
+        setLoading(false);
+        return;
       }
+
+      // The redirect will happen automatically
     } catch (error) {
-      console.error(
-        "Error during Google Sign-In or backend communication:",
-        error
-      );
-      setError("Failed to sign up with Google");
-    } finally {
+      console.error("Google login error:", error);
+      setError("Failed to login with Google");
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <div className="h-full md:flex">
-        <div className="md:w-1/2 p-12 h-full flex flex-col justify-center items-center">
-          <div className="max-w-md lg:max-w-lg">
-            <div className=" py-8 px-6 shadow shadow-muted-foreground rounded-lg sm:px-10 text-center">
-              <h2 className="text-3xl font-bold mb-4">Login to your account</h2>
-              <p className=" mb-8">Enter your email and password below</p>
-              <Input
-                placeholder="email"
-                className="mb-4"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Input
-                placeholder="password"
-                className="mb-4"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {/* <div className="flex items-center space-x-2 my-4 px-1">
-                <Checkbox
-                  id="remember"
-                  checked={rememberMe}
-                  onCheckedChange={(checked) =>
-                    setRememberMe(checked ? true : false)
-                  }
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="flex justify-center">
+          <Image
+            src="/logo.png"
+            alt="ImmiGrow Logo"
+            width={120}
+            height={120}
+            className="h-16 w-auto"
+          />
+        </div>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Sign in to your account
+        </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Or{" "}
+          <Link
+            href="/signup"
+            className="font-medium text-indigo-600 hover:text-indigo-500"
+          >
+            create a new account
+          </Link>
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <form className="space-y-6">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email address
+              </label>
+              <div className="mt-1">
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter your email"
                 />
-                <Label
-                  htmlFor="remember"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Remember Me
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
+              <div className="mt-1">
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter your password"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember-me"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                />
+                <Label htmlFor="remember-me" className="text-sm text-gray-900">
+                  Remember me
                 </Label>
               </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>} */}
-              <Button
-                className={
-                  "bg-blue-600 hover:bg-blue-500 w-full mb-4" +
-                  (loading
-                    ? " cursor-not-allowed bg-blue-300 hover:bg-blue-300"
-                    : "")
-                }
-                onClick={(e) => handleLogin(e)}
-              >
-                {loading ? <FaSpinner className="animate-spin" /> : "Login"}
-              </Button>
-              <p className="text-sm mb-4">
-                Forgot Password?{" "}
+
+              <div className="text-sm">
                 <Link
-                  href={"/forgot-password"}
-                  className="font-bold text-blue-600 hover:text-blue-500"
+                  href="/forgot-password"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
                 >
-                  Reset
+                  Forgot your password?
                 </Link>
-              </p>
-              <div className="flex items-center mb-4">
-                <div className="flex-grow h-px" />
-                <span className="mx-4 text-sm">OR</span>
-                <div className="flex-grow h-px" />
               </div>
+            </div>
+
+            {error && (
+              <div className="text-red-600 text-sm text-center">{error}</div>
+            )}
+
+            <div>
               <Button
-                variant="outline"
-                className={
-                  "flex items-center justify-center w-full mb-4" +
-                  (loading
-                    ? " cursor-not-allowed bg-neutral-300 hover:bg-neutral-300"
-                    : "")
-                }
-                onClick={() => handleGoogleLogin()}
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading}
+                onClick={handleLogin}
               >
                 {loading ? (
-                  <FaSpinner className="animate-spin" />
+                  <FaSpinner className="animate-spin h-5 w-5" />
                 ) : (
-                  <>
-                    <FcGoogle size={6} /> Continue with Google
-                  </>
+                  "Sign in"
                 )}
               </Button>
-              <p className="text-xs mt-4">
-                By clicking login, you agree to our Terms of Service and Privacy
-                Policy.
-              </p>
-              <p className="text-md mt-6 pt-6 border-t">
-                Don&apos;t have an account?{" "}
-                <Link
-                  className="text-blue-600 hover:text-blue-500 font-semibold"
-                  href="/signup"
-                >
-                  Sign up
-                </Link>
-              </p>
             </div>
-          </div>
-        </div>
-        <div className="relative w-1/2 p-12 bg-blue-600 md:flex flex-col justify-between hidden">
-          <Image
-            src={"/login.jpg"}
-            alt="signup"
-            layout="fill"
-            objectFit="cover"
-            className="absolute inset-0 opacity-50"
-          />
+
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <Button
+                  type="button"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  onClick={handleGoogleLogin}
+                  disabled={loading}
+                >
+                  <FcGoogle className="h-5 w-5" />
+                  <span className="ml-2">Sign in with Google</span>
+                </Button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
 
+      {/* Email Verification Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Email Verification Required</DialogTitle>
           </DialogHeader>
-          <p>Please verify your email to continue.</p>
+          <p>
+            Please verify your email address before logging in. Check your inbox
+            for a verification email.
+          </p>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => setShowDialog(false)}>
+            <Button variant="outline" onClick={() => setShowDialog(false)}>
               Cancel
             </Button>
-            <Button onClick={handleResendEmail}>
-              Resend Verification Email
-            </Button>
+            <Button onClick={handleResendEmail}>Resend Verification Email</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
 
