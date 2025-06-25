@@ -3,6 +3,7 @@
 import QuickLinks from "@/components/QuickLinks";
 import Listings from "@/components/Listings";
 import SideCard from "@/components/Sidecard";
+import AIFeaturesPanel from "@/components/ai/AIFeaturesPanel";
 import { useEffect, useState } from "react";
 
 export default function DashboardLayout() {
@@ -73,6 +74,7 @@ export default function DashboardLayout() {
 
   const services = [
     "Dashboard",
+    "AI Assistant",
     "Explore Homes",
     "Explore Cars",
     "Book Consultation",
@@ -80,6 +82,7 @@ export default function DashboardLayout() {
   ];
   const urls = [
     "/dashboard/user",
+    "/dashboard/user/ai",
     "/dashboard/user/homes",
     "/dashboard/user/cars",
     "/dashboard/user/consultant",
@@ -100,11 +103,17 @@ export default function DashboardLayout() {
           <h2 className="text-2xl font-bold mb-6 mt-4">User Dashboard</h2>
           <QuickLinks
             links={[
+              { label: "AI Assistant", href: "/dashboard/user/ai" },
               { label: "Profile Settings", href: "/dashboard/user/profile" },
               { label: "Saved Listings", href: "/dashboard/user/saved" },
               { label: "Booking History", href: "/dashboard/user/bookings" },
             ]}
           />
+          
+          {/* AI Features Section */}
+          <div className="mb-8">
+            <AIFeaturesPanel />
+          </div>
           <h2 className="text-2xl font-bold mb-6 mt-4">
             Explore recent home listings
           </h2>
