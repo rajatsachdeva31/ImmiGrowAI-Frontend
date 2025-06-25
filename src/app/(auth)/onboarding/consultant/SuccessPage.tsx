@@ -24,7 +24,7 @@ const SuccessPage: React.FC<{ formData: FormData }> = ({ formData }) => {
         <strong>Countries Served:</strong> {formData.countriesServed.join(", ")}
       </span>
       <span className="flex justify-between mb-1">
-        <strong>Consultation Fee:</strong> {formData.consultationFee}
+        <strong>Mentorship Fee:</strong> {formData.consultationFee}
       </span>
       <span className="flex justify-between mb-1">
         <strong>Business Registration Number:</strong>{" "}
@@ -33,7 +33,7 @@ const SuccessPage: React.FC<{ formData: FormData }> = ({ formData }) => {
       <span className="flex justify-between mb-1">
         <strong>Partnered Legal Firms:</strong> {formData.partneredLegalFirms}
       </span>
-    
+
       <span className="flex justify-between mb-1">
         <strong>Website Links:</strong> {formData.websiteLinks}
       </span>

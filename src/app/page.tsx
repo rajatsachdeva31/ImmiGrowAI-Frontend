@@ -68,7 +68,6 @@ export default function LandingPage() {
                   // className="object-cover"
                   priority
                 />
-                {/* <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div> */}
               </div>
             </div>
           </div>
@@ -123,7 +122,7 @@ export default function LandingPage() {
                   <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
                     <MessageSquare className="h-6 w-6 text-blue-500" />
                   </div>
-                  <CardTitle>Consultants</CardTitle>
+                  <CardTitle>Mentors</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-base">

@@ -8,7 +8,7 @@ const services = [
   "Dashboard",
   "Explore Homes",
   "Explore Cars",
-  "Book Consultation",
+  "Book Mentorship",
   "Bookings",
 ];
 const urls = [
@@ -66,7 +66,7 @@ const ConsultantPage = () => {
       </div>
       <div className="col-span-12 md:col-span-9 p-5">
         <div className="container mx-auto">
-          <h2 className="text-2xl font-bold mb-6 mt-4">Consultants</h2>
+          <h2 className="text-2xl font-bold mb-6 mt-4">Mentors</h2>
           {/* <ReusableFilter filtersConfig={carFiltersConfig} onFilterChange={handleFilterChange} /> */}
         </div>
         {loading && <p>Loading...</p>}

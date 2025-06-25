@@ -73,9 +73,9 @@ const ConsultantCarousel = ({ consultants }) => {
     if (response.status === 200) {
       const data = await response.json();
       if (checkIfAnyDateIsFuture(data.booking)) {
-        alert("You have already booked an appointment with this seller");
+        alert("You have already booked an appointment with them");
       } else {
-        alert("Action Pending from Consultant");
+        alert("Action Pending from Mentor");
       }
     } else {
       router.push(`/dashboard/user/slots/consultant/${consultantId}`);
@@ -98,7 +98,7 @@ const ConsultantCarousel = ({ consultants }) => {
             {/* Info below icon */}
             <div className="pt-10 px-4 pb-6">
               <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
-                {consultant.user?.fullName || "Unknown Consultant"}
+                {consultant.user?.fullName || "Unknown Mentor"}
               </p>
               <p className="text-sm text-gray-600">
                 {consultant.user?.email || "No email provided"}
@@ -136,7 +136,7 @@ const ConsultantCarousel = ({ consultants }) => {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Consultant Info</DialogTitle>
+            <DialogTitle>Mentor Info</DialogTitle>
           </DialogHeader>
           {selectedConsultant && (
             <div className="space-y-2">
@@ -162,7 +162,7 @@ const ConsultantCarousel = ({ consultants }) => {
                 {selectedConsultant.websiteOrSocialMedia || "N/A"}
               </p>
               <p>
-                <strong>Consultation Fee:</strong>{" "}
+                <strong>Mentorship Fee:</strong>{" "}
                 {selectedConsultant.consultationFee
                   ? `$${selectedConsultant.consultationFee}`
                   : "N/A"}

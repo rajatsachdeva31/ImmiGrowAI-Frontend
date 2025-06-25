@@ -144,9 +144,9 @@ const ViewCarListing = () => {
       if (response.status === 200) {
         const data = await response.json();
         if (checkIfAnyDateIsFuture(data.booking)) {
-          alert("You have already booked an appointment with this seller");
+          alert("You have already booked an appointment with them");
         } else {
-          alert("Action Pending from Consultant");
+          alert("Action Pending from Mentor");
         }
       } else {
         router.push(`/dashboard/user/slots/${listingId}/${type}`);

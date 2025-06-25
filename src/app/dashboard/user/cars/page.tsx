@@ -9,7 +9,7 @@ const services = [
   "Dashboard",
   "Explore Homes",
   "Explore Cars",
-  "Book Consultation",
+  "Book Mentorship",
   "Bookings",
 ];
 const urls = [

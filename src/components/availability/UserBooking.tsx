@@ -116,7 +116,7 @@ const BookingView = () => {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="house">House Bookings</TabsTrigger>
           <TabsTrigger value="car">Car Bookings</TabsTrigger>
-          <TabsTrigger value="consultant">Consultant Bookings</TabsTrigger>
+          <TabsTrigger value="consultant">Mentor Bookings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="house">
@@ -153,7 +153,7 @@ const BookingView = () => {
                   ? "User Details"
                   : modalData.type === "listing"
                   ? "Listing Details"
-                  : "Consultant Details"}
+                  : "Mentor Details"}
               </DialogTitle>
             </DialogHeader>
             <div className="p-4 bg-gray-100 rounded">
@@ -210,7 +210,7 @@ const TableComponent = ({
       <thead>
         <tr className="bg-gray-100">
           <th className="border p-2">ID</th>
-          {type === "consultant" ? <th className="border p-2">Consultant</th> : <>
+          {type === "consultant" ? <th className="border p-2">Mentor</th> : <>
             <th className="border p-2">User</th>
             <th className="border p-2">Listing</th>
           </>}
@@ -226,7 +226,7 @@ const TableComponent = ({
             {type === "consultant" ? (
               <td className="border p-2 text-center">
                 <Button variant="link" onClick={() => onViewDetails({ type: "consultant", data: booking.consultant })}>
-                  View Consultant
+                  View Mentor
                 </Button>
               </td>
             ) : (

@@ -32,7 +32,7 @@ const AppointmentBookingCPage = () => {
       <Link href={backLink}>
         <Button variant="ghost" className="flex items-center gap-2 mb-4 text-gray-600 hover:text-gray-900">
           <FiArrowLeft size={20} />
-          <span className="font-medium">Back to Consultants</span>
+          <span className="font-medium">Back to Mentors</span>
         </Button>
       </Link>
 

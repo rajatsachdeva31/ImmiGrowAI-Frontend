@@ -58,7 +58,7 @@ const Onboarding = () => {
               <SelectItem value="Realtors">Realtors</SelectItem>
               <SelectItem value="Car Dealers">Car Dealers</SelectItem>
               <SelectItem value="Immigration Consultants">
-                Immigration Consultants
+                Mentors
               </SelectItem>
               <SelectItem value="Immigrant">Immigrant</SelectItem>
             </SelectContent>

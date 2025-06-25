@@ -9,7 +9,7 @@ const services = [
   "Dashboard",
   "Explore Homes",
   "Explore Cars",
-  "Book Consultation",
+  "Book Mentorship",
   "Bookings",
 ];
 const urls = [
@@ -79,13 +79,9 @@ const HousesListing = () => {
 
     setFilteredListings(filtered.slice());
   };
-  
+
   // Debugging UI Update
-  useEffect(() => {
-  }, [filteredListings]);
-
-  
-
+  useEffect(() => {}, [filteredListings]);
 
   const houseFiltersConfig = [
     { name: "location", type: "text", placeholder: "Location (e.g. Toronto)" },

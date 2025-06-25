@@ -152,7 +152,7 @@ const BusinessInformation: React.FC<{
         <p className="text-red-500 text-sm mb-4">{errors.countriesServed}</p>
       )}
       <div className="flex justify-between items-center">
-        <Label>Consultation Fee:</Label>
+        <Label>Mentorship Fee:</Label>
         <Input
           className="w-2/3 mb-4"
           type="number"

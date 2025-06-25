@@ -103,9 +103,9 @@ const Consultant = () => {
         newErrors.countriesServed = "Please select at least one country.";
       }
 
-      // Validate Consultation Fee (must be a valid number)
+      // Validate Mentorship Fee (must be a valid number)
       if (!formData.consultationFee) {
-        newErrors.consultationFee = "Consultation fee is required.";
+        newErrors.consultationFee = "Mentorship fee is required.";
       } else if (
         isNaN(Number(formData.consultationFee)) ||
         Number(formData.consultationFee) < 0

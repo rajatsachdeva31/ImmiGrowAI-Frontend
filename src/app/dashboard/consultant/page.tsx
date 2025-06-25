@@ -63,7 +63,7 @@ export default function DashboardLayout() {
       </div>
       <div className="col-span-12 md:col-span-9 p-5">
         <div className="container mx-auto">
-          <h2 className="text-2xl font-bold mb-6 mt-4">Immigration Consultant Dashboard</h2>
+          <h2 className="text-2xl font-bold mb-6 mt-4">Mentor Dashboard</h2>
           <QuickLinks links={[
             { label: "Add Availability", href: "/dashboard/consultant/availability" },
             { label: "View Bookings", href: "/dashboard/consultant/bookings" },

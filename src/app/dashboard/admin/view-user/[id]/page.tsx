@@ -431,7 +431,7 @@ export default function ViewUserPage() {
                   {user.immigrationConsultant.countriesServed}
                 </p>
                 <p>
-                  <strong>Consultation Fee:</strong>{" "}
+                  <strong>Mentorship Fee:</strong>{" "}
                   {user.immigrationConsultant.consultationFee}
                 </p>
                 <p>
