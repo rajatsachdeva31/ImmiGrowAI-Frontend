@@ -90,29 +90,13 @@ export default function LandingPage() {
               <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
                 <CardHeader className="pb-2">
                   <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                    <Home className="h-6 w-6 text-blue-500" />
+                    <Globe className="h-6 w-6 text-blue-500" />
                   </div>
-                  <CardTitle>Housing</CardTitle>
+                  <CardTitle>AI Career Assistance</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-base">
-                    Verified rentals across top cities with virtual tours and
-                    trusted landlords.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-
-              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
-                <CardHeader className="pb-2">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                    <Car className="h-6 w-6 text-blue-500" />
-                  </div>
-                  <CardTitle>Cars</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
-                    New & used cars with insurance options tailored for
-                    newcomers.
+                    AI-powered resume analysis for newcomers.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -122,12 +106,11 @@ export default function LandingPage() {
                   <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
                     <MessageSquare className="h-6 w-6 text-blue-500" />
                   </div>
-                  <CardTitle>Mentors</CardTitle>
+                  <CardTitle>Find Mentors</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-base">
-                    Trusted immigration consultants with verified credentials
-                    and reviews.
+                    Trusted mentors for personalized guidance on your journey.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -135,14 +118,29 @@ export default function LandingPage() {
               <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
                 <CardHeader className="pb-2">
                   <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                    <Globe className="h-6 w-6 text-blue-500" />
+                    <Home className="h-6 w-6 text-blue-500" />
                   </div>
-                  <CardTitle>Smart Planner</CardTitle>
+                  <CardTitle>AI powered Job Discovery</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-base">
-                    AI-powered immigration guidance customized to your unique
-                    situation.
+                    AI matches you with the best job opportunities based on
+                    your skills and location.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+
+              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
+                <CardHeader className="pb-2">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                    <Car className="h-6 w-6 text-blue-500" />
+                  </div>
+                  <CardTitle>Housing & Cars</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base">
+                    Affordable cars and rentals with AI recommendations based on
+                    your needs.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -176,7 +174,7 @@ export default function LandingPage() {
                   number: "02",
                   title: "Get Smart Matches Instantly",
                   description:
-                    "AI finds you the right homes, cars, and consultants based on your preferences.",
+                    "AI finds you the right homes, cars, and mentors based on your preferences.",
                   icon: CheckCircle,
                 },
                 {
@@ -226,26 +224,26 @@ export default function LandingPage() {
                 {
                   title: "International Students",
                   description:
-                    "Find student housing, affordable cars, and visa support.",
+                    "Find mentors, affordable housing, transportation, and community support.",
                   icon: GraduationCap,
                   color: "bg-blue-100",
                 },
                 {
                   title: "Skilled Workers",
                   description:
-                    "Professional relocation support for you and your family.",
+                    "Professional housing, reliable transportation, and career resources.",
                   icon: Building,
                   color: "bg-purple-100",
                 },
                 {
                   title: "Families",
                   description:
-                    "Family-friendly homes, safe vehicles, and community connections.",
+                    "Family-friendly housing, schools, and community connections.",
                   icon: Users,
                   color: "bg-orange-100",
                 },
                 {
-                  title: "Realtors & Car Dealers",
+                  title: "Mentors, Realtors & Car Dealers",
                   description:
                     "Connect with newcomers looking for your services.",
                   icon: Home,

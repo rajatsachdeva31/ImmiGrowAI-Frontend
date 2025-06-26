@@ -13,8 +13,8 @@ const Logo = ({ path }: { path: string }) => {
       className="flex gap-1 justify-center items-center"
       href={isProtectedPath ? path : "/"}
     >
-      <Image src={"/logo.png"} width={40} height={40} alt="ImmiGrow" />
-      <p className="text-3xl font-bold tracking-tighter">ImmiGrow</p>
+      <Image src={"/logo.png"} width={40} height={40} alt="ImmiGrowAI" />
+      <p className="text-3xl font-bold tracking-tighter">ImmiGrowAI</p>
     </Link>
   );
 };

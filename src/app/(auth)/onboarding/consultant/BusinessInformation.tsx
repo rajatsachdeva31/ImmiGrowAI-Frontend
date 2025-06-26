@@ -14,10 +14,10 @@ import {
 type OptionType = { value: string; label: string };
 
 const immigrationServicesOptions: OptionType[] = [
-  { value: "Permanant Resident", label: "Permanant Resident" },
-  { value: "Study Permit", label: "Study Permit" },
-  { value: "Work Permit", label: "Work Permit" },
-  { value: "Citizen", label: "Citizen" },
+  { value: "IT", label: "IT" },
+  { value: "Finance", label: "Finance" },
+  { value: "Management", label: "Management" },
+  { value: "Accounting", label: "Accounting" },
 ];
 
 const languagesSpokenOptions: OptionType[] = [
@@ -27,9 +27,9 @@ const languagesSpokenOptions: OptionType[] = [
 ];
 
 const countriesServedOptions: OptionType[] = [
-  { value: "C1", label: "C1" },
-  { value: "C2", label: "C2" },
-  { value: "C3", label: "C3" },
+  { value: "Canada", label: "Canada" },
+  { value: "India", label: "India" },
+  { value: "USA", label: "USA" },
 ];
 
 const BusinessInformation: React.FC<{
@@ -199,7 +199,7 @@ const BusinessInformation: React.FC<{
         <p className="text-red-500 text-sm mb-4">{errors.websiteLinks}</p>
       )}
       <div className="flex justify-between items-center">
-        <Label>Immigration Services:</Label>
+        <Label>Mentoring Services:</Label>
         <Select
           isMulti
           options={immigrationServicesOptions}

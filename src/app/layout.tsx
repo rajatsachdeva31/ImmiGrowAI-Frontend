@@ -13,8 +13,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "ImmiGrow",
-  description: "ImmiGrow",
+  title: "ImmiGrowAI",
+  description: "ImmiGrowAI",
   icons: {
     icon: "/logo.png",
   },
