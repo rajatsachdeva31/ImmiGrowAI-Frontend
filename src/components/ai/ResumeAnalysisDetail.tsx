@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, FileText, User, Mail, Phone, MapPin, Calendar, TrendingUp, Star, AlertCircle, CheckCircle, Briefcase, GraduationCap, Code, Languages, Target, ArrowRight, X, Loader2, Globe, Award, DollarSign } from 'lucide-react';
+import { ArrowLeft, FileText, User, Mail, Phone, MapPin, Calendar, TrendingUp, Star, AlertCircle, CheckCircle, Briefcase, GraduationCap, Code, Languages, Target, ArrowRight, X, Loader2, Globe, Award, DollarSign, Search } from 'lucide-react';
+import JobSearchModal from './JobSearchModal';
 
 interface ResumeAnalysis {
   id: string;
@@ -219,6 +220,10 @@ const ResumeAnalysisDetail: React.FC<ResumeAnalysisDetailProps> = ({ analysis, o
   const [selectedPosition, setSelectedPosition] = useState<PositionRecommendation | null>(null);
   const [enhancedProfile, setEnhancedProfile] = useState<EnhancedProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
+  
+  // Job search modal state
+  const [jobSearchModalOpen, setJobSearchModalOpen] = useState(false);
+  const [jobSearchCareerPath, setJobSearchCareerPath] = useState<{ title: string; industry?: string } | null>(null);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -397,6 +402,15 @@ const ResumeAnalysisDetail: React.FC<ResumeAnalysisDetailProps> = ({ analysis, o
     setEnhancedProfile(null);
     setLoadingPositions(false);
     setLoadingProfile(false);
+  };
+
+  // Job search handler
+  const handleJobSearch = (position: PositionRecommendation) => {
+    setJobSearchCareerPath({
+      title: position.position,
+      industry: undefined // You can extract industry from position if available
+    });
+    setJobSearchModalOpen(true);
   };
 
   return (
@@ -997,7 +1011,7 @@ const ResumeAnalysisDetail: React.FC<ResumeAnalysisDetailProps> = ({ analysis, o
                   ) : (
                     <div className="grid gap-4">
                       {positions.map((position, index) => (
-                        <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleSelectPosition(position)}>
+                        <Card key={index} className="hover:shadow-lg transition-shadow">
                           <CardContent className="p-6">
                             <div className="flex items-start justify-between mb-4">
                               <div className="flex-1">
@@ -1054,9 +1068,28 @@ const ResumeAnalysisDetail: React.FC<ResumeAnalysisDetailProps> = ({ analysis, o
                               </div>
                             </div>
 
-                            <div className="flex items-center justify-between pt-4 border-t">
-                              <p className="text-sm text-gray-500">Click to generate detailed career profile</p>
-                              <ArrowRight className="w-4 h-4 text-blue-600" />
+                            <div className="flex flex-col gap-2 pt-4 border-t">
+                              <div className="flex gap-2">
+                                <Button 
+                                  onClick={() => handleSelectPosition(position)}
+                                  variant="default"
+                                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                                >
+                                  <Target className="w-4 h-4 mr-2" />
+                                  Generate Career Profile
+                                </Button>
+                                <Button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleJobSearch(position);
+                                  }}
+                                  variant="outline"
+                                  className="flex-1 border-green-600 text-green-700 hover:bg-green-50"
+                                >
+                                  <Search className="w-4 h-4 mr-2" />
+                                  Jobs Related to {position.position}
+                                </Button>
+                              </div>
                             </div>
                           </CardContent>
                         </Card>
@@ -1216,6 +1249,13 @@ const ResumeAnalysisDetail: React.FC<ResumeAnalysisDetailProps> = ({ analysis, o
           </div>
         </div>
       )}
+
+      {/* Job Search Modal */}
+      <JobSearchModal
+        isOpen={jobSearchModalOpen}
+        onClose={() => setJobSearchModalOpen(false)}
+        careerPath={jobSearchCareerPath || { title: '' }}
+      />
     </div>
   );
 };

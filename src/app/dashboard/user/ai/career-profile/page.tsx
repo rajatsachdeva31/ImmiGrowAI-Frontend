@@ -17,9 +17,14 @@ import {
   Briefcase,
   DollarSign,
   CheckCircle,
-  BookOpen
+  BookOpen,
+  Download,
+  Eye,
+  Search
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import JobSearchModal from '@/components/ai/JobSearchModal';
 
 interface PositionRecommendation {
   title: string;
@@ -79,6 +84,10 @@ export default function CareerProfilePage() {
   const [selectedPosition, setSelectedPosition] = useState<PositionRecommendation | null>(null);
   const [enhancedProfile, setEnhancedProfile] = useState<EnhancedProfile | null>(null);
   const [skillGapAnalysis, setSkillGapAnalysis] = useState<any>(null);
+  const [generatingResume, setGeneratingResume] = useState(false);
+  const [generatedResume, setGeneratedResume] = useState<any>(null);
+  const [jobSearchModalOpen, setJobSearchModalOpen] = useState(false);
+  const [jobSearchCareerPath, setJobSearchCareerPath] = useState<{ title: string; industry?: string } | null>(null);
   
   const { toast } = useToast();
 
@@ -181,6 +190,72 @@ export default function CareerProfilePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleResumeGeneration = async (position: PositionRecommendation) => {
+    setGeneratingResume(true);
+    
+    try {
+      const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+      
+      const response = await fetch('/api/protected/career/generate-resume', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          targetPosition: position,
+          existingAnalysisId: analysisData?.analysisId,
+          userProfile: null // Will fetch from database if available
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Resume generation failed');
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setGeneratedResume(result.data.generatedResume);
+        
+        toast({
+          title: "Resume Generated Successfully",
+          description: `Created an optimized resume for ${position.title}`,
+        });
+
+        // Optional: Download as JSON
+        const resumeBlob = new Blob([JSON.stringify(result.data.generatedResume, null, 2)], 
+          { type: 'application/json' });
+        const url = URL.createObjectURL(resumeBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `AI_Generated_Resume_${position.title.replace(/\s+/g, '_')}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+      }
+    } catch (error) {
+      console.error('Resume generation error:', error);
+      toast({
+        title: "Resume Generation Failed",
+        description: "Unable to generate resume. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingResume(false);
+    }
+  };
+
+  const handleJobSearch = (position: PositionRecommendation) => {
+    setJobSearchCareerPath({
+      title: position.title,
+      industry: position.industry
+    });
+    setJobSearchModalOpen(true);
   };
 
   const renderUploadStep = () => (
@@ -328,23 +403,53 @@ export default function CareerProfilePage() {
                   </div>
                 </div>
                 
-                <Button 
-                  onClick={() => handlePositionSelect(position)}
-                  disabled={loading}
-                  className="w-full"
-                >
-                  {loading && selectedPosition === position ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Generating Profile...
-                    </>
-                  ) : (
-                    <>
-                      Generate Enhanced Profile
-                      <ChevronRight className="w-4 h-4 ml-2" />
-                    </>
-                  )}
-                </Button>
+                <div className="space-y-2">
+                  <Button 
+                    onClick={() => handlePositionSelect(position)}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    {loading && selectedPosition === position ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Generating Profile...
+                      </>
+                    ) : (
+                      <>
+                        Generate Enhanced Profile
+                        <ChevronRight className="w-4 h-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                  
+                  <Button 
+                    onClick={() => handleResumeGeneration(position)}
+                    disabled={generatingResume}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    {generatingResume ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                        Generating Resume...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="w-4 h-4 mr-2" />
+                        Generate New Resume
+                      </>
+                    )}
+                  </Button>
+                  
+                  <Button 
+                    onClick={() => handleJobSearch(position)}
+                    variant="default"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <Search className="w-4 h-4 mr-2" />
+                    Jobs Related to {position.title}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -596,6 +701,13 @@ export default function CareerProfilePage() {
         {currentStep === 'upload' && renderUploadStep()}
         {currentStep === 'recommendations' && renderRecommendationsStep()}
         {currentStep === 'enhanced' && renderEnhancedProfileStep()}
+        
+        {/* Job Search Modal */}
+        <JobSearchModal
+          isOpen={jobSearchModalOpen}
+          onClose={() => setJobSearchModalOpen(false)}
+          careerPath={jobSearchCareerPath || { title: '' }}
+        />
       </div>
     </div>
   );
