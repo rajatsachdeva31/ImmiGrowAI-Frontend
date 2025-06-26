@@ -30,7 +30,6 @@ export default function Header() {
         {pathname.endsWith("/") && (
           <div className="hidden md:flex items-center gap-12">
             <Link href="#about">About</Link>
-            <Link href="#testimonials">Testimonials</Link>
             <Link href="#contact">Contact</Link>
           </div>
         )}

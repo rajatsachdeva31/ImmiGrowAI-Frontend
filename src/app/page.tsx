@@ -20,7 +20,6 @@ import {
   GraduationCap,
   Home,
   MessageSquare,
-  Star,
   Users,
 } from "lucide-react";
 import Image from "next/image";
@@ -43,8 +42,8 @@ export default function LandingPage() {
                   <span className="text-blue-500">Starts Here</span>
                 </h1>
                 <p className="text-xl text-gray-600">
-                  AI-powered help for housing, cars, and immigration support —
-                  all in one place.
+                  AI-powered platform to help you find jobs, mentors, housing
+                  and cars for a smooth transition to new country.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 mt-4">
                   <Link href={"/signup"}>
@@ -124,8 +123,8 @@ export default function LandingPage() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-base">
-                    AI matches you with the best job opportunities based on
-                    your skills and location.
+                    AI matches you with the best job opportunities based on your
+                    skills and location.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -281,7 +280,7 @@ export default function LandingPage() {
         </section>
 
         {/* Testimonials */}
-        <section id="testimonials" className="py-20 bg-gray-50">
+        {/* <section id="testimonials" className="py-20 bg-gray-50">
           <div className="container mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -299,14 +298,14 @@ export default function LandingPage() {
                   name: "Sarah Chen",
                   location: "From China to Canada",
                   quote:
-                    "ImmiGrow helped me find a perfect apartment and a reliable car within days of arriving. The consultant they matched me with made my visa process so much easier.",
+                    "ImmiGrowAI helped me find a perfect apartment and a reliable car within days of arriving. The consultant they matched me with made my visa process so much easier.",
                   rating: 5,
                 },
                 {
                   name: "Miguel Rodriguez",
                   location: "From Mexico to USA",
                   quote:
-                    "As a student, I was worried about finding affordable housing. ImmiGrow not only found me a great place but also connected me with other students from my country.",
+                    "As a student, I was worried about finding affordable housing. ImmiGrowAI not only found me a great place but also connected me with other students from my country.",
                   rating: 5,
                 },
                 {
@@ -368,7 +367,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* CTA Banner */}
         <section className="py-16 bg-blue-500 text-white">
