@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert } from '@/components/ui/alert';
-import { Upload, FileText, CheckCircle, XCircle, Loader2, User, Briefcase, GraduationCap, Award, Globe, Zap } from 'lucide-react';
+import { Upload, FileText, CheckCircle, XCircle, Loader2, User, Briefcase, GraduationCap, Award, Globe, Zap, Target, TrendingUp, ArrowRight } from 'lucide-react';
 
 interface ResumeAnalysis {
   analysisId?: string;
@@ -59,11 +59,42 @@ interface ResumeAnalysis {
     salaryRangeEstimate: string;
     confidence: number;
   };
+  positionRecommendations?: {
+    position: string;
+    successProbability: number;
+    reasons: string[];
+    skillMatch: number;
+    salaryRange: string;
+    marketDemand: string;
+    immigrantFriendly: boolean;
+    requiredSkills: string[];
+    skillGaps: string[];
+    confidence: number;
+  }[];
   metadata?: {
     processedAt: string;
     originalFileName: string;
     processingMethod: 'direct_pdf' | 'text_extraction';
     apiVersion: string;
+  };
+}
+
+interface PositionRecommendation {
+  title: string;
+  matchScore: number;
+  successProbability: number;
+  salaryRange: string;
+  description: string;
+  requiredSkills: string[];
+  matchingSkills: string[];
+  skillGaps: string[];
+  marketDemand: string;
+  growthPotential: string;
+  immigrantFriendly: boolean;
+  detailedAnalysis: {
+    strengthsMatch: string[];
+    potentialConcerns: string[];
+    recommendedPreparation: string[];
   };
 }
 
@@ -73,6 +104,10 @@ export default function ResumeUploadPage() {
   const [analysis, setAnalysis] = useState(null);
   const [error, setError] = useState('');
   const [dragActive, setDragActive] = useState(false);
+  const [generatingProfile, setGeneratingProfile] = useState(false);
+  const [positionRecommendations, setPositionRecommendations] = useState([]);
+  const [showPositionSelection, setShowPositionSelection] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState(null);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -164,27 +199,64 @@ export default function ResumeUploadPage() {
   };
 
   const generateCareerProfile = async () => {
+    setGeneratingProfile(true);
+    setError('');
+    
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/protected/ai-local/career-profile/generate`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/protected/ai-local/career-profile/position-recommendations`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          resumeAnalysisId: analysis?.analysisId,
-          careerObjectives: {}
+          resumeAnalysis: analysis
         })
       });
       
       const result = await response.json();
       if (result.success) {
-        // Redirect to career profile page or show success message
-        alert('Career profile generated successfully!');
+        setPositionRecommendations(result.data.positions || []);
+        setShowPositionSelection(true);
+      } else {
+        setError(result.message || 'Failed to generate position recommendations');
       }
     } catch (err) {
       console.error('Career profile generation error:', err);
+      setError('Failed to generate career recommendations');
+    } finally {
+      setGeneratingProfile(false);
+    }
+  };
+
+  const selectCareerPath = async (position) => {
+    setSelectedPosition(position);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/protected/ai-local/career-profile/enhanced-profile`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          targetPosition: position,
+          resumeAnalysis: analysis
+        })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        // Redirect to career profile page with the generated data
+        window.location.href = '/dashboard/user/ai/career-profile';
+      } else {
+        setError('Failed to generate enhanced profile');
+      }
+    } catch (err) {
+      console.error('Enhanced profile generation error:', err);
+      setError('Failed to generate enhanced profile');
     }
   };
 
@@ -330,6 +402,105 @@ export default function ResumeUploadPage() {
               </CardContent>
             </Card>
 
+            {/* Canadian Market Analysis - ALWAYS SHOW */}
+            <Card className="border-2 border-red-200 bg-red-50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-red-600" />
+                  Canadian Market Analysis
+                  <Badge variant="secondary" className="bg-red-100 text-red-700">
+                    🇨🇦 Powered by Gemini AI
+                  </Badge>
+                </CardTitle>
+                <CardDescription>
+                  AI-powered analysis of your resume's compatibility with the Canadian job market
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {analysis.canadianMarketAnalysis ? (
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">Market Relevance</p>
+                      <Badge 
+                        variant={
+                          analysis.canadianMarketAnalysis.overallRelevance === 'High' ? 'default' :
+                          analysis.canadianMarketAnalysis.overallRelevance === 'Medium' ? 'secondary' : 'outline'
+                        }
+                        className={`${
+                          analysis.canadianMarketAnalysis.overallRelevance === 'High' ? 'bg-green-100 text-green-800' :
+                          analysis.canadianMarketAnalysis.overallRelevance === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {analysis.canadianMarketAnalysis.overallRelevance} Relevance
+                      </Badge>
+                    </div>
+                    
+                    {analysis.canadianMarketAnalysis.strengthsForCanadianMarket?.length > 0 && (
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">Canadian Market Strengths</p>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
+                          {analysis.canadianMarketAnalysis.strengthsForCanadianMarket.map((strength, index) => (
+                            <li key={index}>{strength}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {analysis.canadianMarketAnalysis.potentialChallenges?.length > 0 && (
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">Potential Challenges</p>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-red-600">
+                          {analysis.canadianMarketAnalysis.potentialChallenges.map((challenge, index) => (
+                            <li key={index}>{challenge}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {analysis.canadianMarketAnalysis.recommendedImprovements?.length > 0 && (
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">Recommended Improvements</p>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-blue-600">
+                          {analysis.canadianMarketAnalysis.recommendedImprovements.map((improvement, index) => (
+                            <li key={index}>{improvement}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {analysis.canadianMarketAnalysis.targetIndustries?.length > 0 && (
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">Target Industries in Canada</p>
+                        <div className="flex flex-wrap gap-2">
+                          {analysis.canadianMarketAnalysis.targetIndustries.map((industry, index) => (
+                            <Badge key={index} variant="outline" className="bg-blue-50">
+                              {industry}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {analysis.canadianMarketAnalysis.salaryRangeEstimate && (
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-2">Estimated Salary Range (CAD)</p>
+                        <Badge variant="secondary" className="bg-green-100 text-green-700">
+                          {analysis.canadianMarketAnalysis.salaryRangeEstimate}
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Globe className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500 mb-2">Canadian Market Analysis will be generated with your resume analysis</p>
+                    <p className="text-sm text-gray-400">Upload a resume to see tailored insights for the Canadian job market</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             {/* Skills */}
             <Card>
               <CardHeader>
@@ -436,69 +607,101 @@ export default function ResumeUploadPage() {
               </CardContent>
             </Card>
 
-            {/* Canadian Market Analysis - NEW FEATURE */}
-            {analysis.canadianMarketAnalysis && (
-              <Card className="border-2 border-red-200 bg-red-50">
+            {/* Position Recommendations Modal */}
+            {showPositionSelection && (
+              <Card className="border-2 border-green-200 bg-green-50">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Globe className="h-5 w-5 text-red-600" />
-                    Canadian Market Analysis
-                    <Badge variant="secondary" className="bg-red-100 text-red-700">
-                      🇨🇦 NEW - Powered by Gemini API
+                    <Target className="h-5 w-5 text-green-600" />
+                    Recommended Career Paths
+                    <Badge variant="secondary" className="bg-green-100 text-green-700">
+                      Choose Your Path
                     </Badge>
                   </CardTitle>
+                  <CardDescription>
+                    Select a career path to generate your personalized career profile and development plan
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">Market Relevance</p>
-                      <Badge 
-                        variant={
-                          analysis.canadianMarketAnalysis.overallRelevance === 'High' ? 'default' :
-                          analysis.canadianMarketAnalysis.overallRelevance === 'Medium' ? 'secondary' : 'outline'
-                        }
-                        className={`${
-                          analysis.canadianMarketAnalysis.overallRelevance === 'High' ? 'bg-green-100 text-green-800' :
-                          analysis.canadianMarketAnalysis.overallRelevance === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {analysis.canadianMarketAnalysis.overallRelevance} Relevance
-                      </Badge>
-                    </div>
-                    
-                    {analysis.canadianMarketAnalysis.strengthsForCanadianMarket?.length > 0 && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 mb-2">Canadian Market Strengths</p>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-                          {analysis.canadianMarketAnalysis.strengthsForCanadianMarket.map((strength, index) => (
-                            <li key={index}>{strength}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    
-                    {analysis.canadianMarketAnalysis.targetIndustries?.length > 0 && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 mb-2">Target Industries in Canada</p>
-                        <div className="flex flex-wrap gap-2">
-                          {analysis.canadianMarketAnalysis.targetIndustries.map((industry, index) => (
-                            <Badge key={index} variant="outline" className="bg-blue-50">
-                              {industry}
+                    {positionRecommendations.map((position, index) => (
+                      <div key={index} className="border rounded-lg p-4 bg-white hover:bg-gray-50 transition-colors">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h4 className="font-semibold text-lg">{position.title}</h4>
+                            <p className="text-gray-600 text-sm">{position.description}</p>
+                          </div>
+                          <div className="text-right">
+                            <Badge variant="secondary" className="mb-1">
+                              {Math.round(position.successProbability)}% Success Rate
                             </Badge>
-                          ))}
+                            <p className="text-sm text-gray-500">{position.salaryRange}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700 mb-1">Matching Skills</p>
+                            <div className="flex flex-wrap gap-1">
+                              {position.matchingSkills?.slice(0, 3).map((skill, idx) => (
+                                <Badge key={idx} variant="outline" className="text-xs bg-green-50">
+                                  {skill}
+                                </Badge>
+                              ))}
+                              {position.matchingSkills?.length > 3 && (
+                                <Badge variant="outline" className="text-xs">
+                                  +{position.matchingSkills.length - 3} more
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-700 mb-1">Skill Gaps</p>
+                            <div className="flex flex-wrap gap-1">
+                              {position.skillGaps?.slice(0, 2).map((gap, idx) => (
+                                <Badge key={idx} variant="outline" className="text-xs bg-red-50">
+                                  {gap}
+                                </Badge>
+                              ))}
+                              {position.skillGaps?.length > 2 && (
+                                <Badge variant="outline" className="text-xs">
+                                  +{position.skillGaps.length - 2} more
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-4">
+                            <Badge variant={position.immigrantFriendly ? 'default' : 'secondary'} className="text-xs">
+                              {position.immigrantFriendly ? '🇨🇦 Immigrant Friendly' : 'Standard Requirements'}
+                            </Badge>
+                            <span className="text-sm text-gray-600">
+                              <TrendingUp className="h-4 w-4 inline mr-1" />
+                              {position.growthPotential}
+                            </span>
+                          </div>
+                          <Button 
+                            onClick={() => selectCareerPath(position)}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            Select This Path
+                            <ArrowRight className="h-4 w-4 ml-2" />
+                          </Button>
                         </div>
                       </div>
-                    )}
-                    
-                    {analysis.canadianMarketAnalysis.salaryRangeEstimate && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700 mb-2">Estimated Salary Range (CAD)</p>
-                        <Badge variant="secondary" className="bg-green-100 text-green-700">
-                          {analysis.canadianMarketAnalysis.salaryRangeEstimate}
-                        </Badge>
-                      </div>
-                    )}
+                    ))}
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowPositionSelection(false)}
+                      className="w-full"
+                    >
+                      Back to Resume Analysis
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -549,24 +752,39 @@ export default function ResumeUploadPage() {
             </Card>
 
             {/* Action Buttons */}
-            <div className="flex gap-4">
-              <Button 
-                onClick={generateCareerProfile}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Generate Career Profile
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setFile(null);
-                  setAnalysis(null);
-                  setError('');
-                }}
-              >
-                Upload Another Resume
-              </Button>
-            </div>
+            {!showPositionSelection && (
+              <div className="flex gap-4">
+                <Button 
+                  onClick={generateCareerProfile}
+                  disabled={generatingProfile}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {generatingProfile ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Generating Career Paths...
+                    </>
+                  ) : (
+                    <>
+                      <Target className="h-4 w-4 mr-2" />
+                      Generate Career Profile
+                    </>
+                  )}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setFile(null);
+                    setAnalysis(null);
+                    setError('');
+                    setShowPositionSelection(false);
+                    setPositionRecommendations([]);
+                  }}
+                >
+                  Upload Another Resume
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>

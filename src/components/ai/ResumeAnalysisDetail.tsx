@@ -1,10 +1,11 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, FileText, User, Mail, Phone, MapPin, Calendar, TrendingUp, Star, AlertCircle, CheckCircle, Briefcase, GraduationCap, Code, Languages } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { ArrowLeft, FileText, User, Mail, Phone, MapPin, Calendar, TrendingUp, Star, AlertCircle, CheckCircle, Briefcase, GraduationCap, Code, Languages, Target, ArrowRight, X, Loader2, Globe, Award, DollarSign } from 'lucide-react';
 
 interface ResumeAnalysis {
   id: string;
@@ -75,6 +76,18 @@ interface ResumeAnalysis {
     salaryRangeEstimate?: string;
     confidence?: number;
   };
+  positionRecommendations?: {
+    position: string;
+    successProbability: number;
+    reasons: string[];
+    skillMatch: number;
+    salaryRange: string;
+    marketDemand: string;
+    immigrantFriendly: boolean;
+    requiredSkills: string[];
+    skillGaps: string[];
+    confidence: number;
+  }[];
   confidenceScores?: {
     overall?: number;
     dataExtraction?: number;
@@ -88,12 +101,125 @@ interface ResumeAnalysis {
   };
 }
 
+interface PositionRecommendation {
+  position: string;
+  successProbability: number;
+  reasons: string[];
+  skillMatch: number;
+  marketDemand: string;
+  salaryRange: string;
+  immigrantFriendly: boolean;
+  requiredSkills: string[];
+  recommendedActions: string[];
+}
+
+interface EnhancedProfile {
+  optimized_profile?: {
+    professional_title?: string;
+    elevator_pitch?: string;
+    value_proposition?: string;
+    key_achievements?: string[];
+  };
+  skills_positioning?: {
+    primary_skills?: Array<{
+      skill: string;
+      relevance_to_role: string;
+      evidence: string;
+      positioning_statement: string;
+    }>;
+    skill_development_plan?: Array<{
+      skill: string;
+      importance: string;
+      learning_path: string;
+      timeline: string;
+      resources: string[];
+    }>;
+  };
+  experience_repositioning?: {
+    relevant_experience?: Array<{
+      original_role: string;
+      repositioned_as: string;
+      key_transferable_elements: string[];
+      success_metrics: string[];
+      canadian_context: string;
+    }>;
+    project_highlights?: Array<{
+      project: string;
+      relevance: string;
+      technologies_used: string[];
+      impact: string;
+      presentation_tip: string;
+    }>;
+  };
+  application_strategy?: {
+    resume_optimization?: {
+      key_changes: string[];
+      keywords_to_include: string[];
+      sections_to_emphasize: string[];
+      formatting_tips: string[];
+    };
+    cover_letter_strategy?: {
+      opening_approach: string;
+      key_points_to_address: string[];
+      company_research_areas: string[];
+      closing_strategy: string;
+    };
+    networking_approach?: {
+      target_professionals: string[];
+      conversation_starters: string[];
+      value_you_bring: string[];
+      follow_up_strategies: string[];
+    };
+  };
+  interview_preparation?: {
+    common_questions?: Array<{
+      question: string;
+      strategy: string;
+      key_points: string[];
+      example_answer_structure: string;
+    }>;
+    behavioral_examples?: Array<{
+      situation: string;
+      task: string;
+      action: string;
+      result: string;
+      relevance: string;
+    }>;
+    technical_preparation?: {
+      skills_to_demonstrate: string[];
+      portfolio_items: string[];
+      coding_challenges: string[];
+      system_design_topics: string[];
+    };
+    cultural_fit_preparation?: {
+      company_culture_research: string[];
+      canadian_workplace_norms: string[];
+      questions_to_ask: string[];
+    };
+  };
+  "90_day_action_plan"?: {
+    week_1_2?: string[];
+    month_1?: string[];
+    month_2?: string[];
+    month_3?: string[];
+    success_metrics?: string[];
+  };
+}
+
 interface ResumeAnalysisDetailProps {
   analysis: ResumeAnalysis;
   onBack: () => void;
 }
 
 const ResumeAnalysisDetail: React.FC<ResumeAnalysisDetailProps> = ({ analysis, onBack }) => {
+  // State for career profile generation
+  const [showPositionModal, setShowPositionModal] = useState(false);
+  const [positions, setPositions] = useState<PositionRecommendation[]>([]);
+  const [loadingPositions, setLoadingPositions] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState<PositionRecommendation | null>(null);
+  const [enhancedProfile, setEnhancedProfile] = useState<EnhancedProfile | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -162,6 +288,115 @@ const ResumeAnalysisDetail: React.FC<ResumeAnalysisDetailProps> = ({ analysis, o
       case 'low': return 35;
       default: return 0;
     }
+  };
+
+  // Helper functions for career profile generation
+  const getScoreColorClass = (score: number) => {
+    if (score >= 80) return 'border-green-500 bg-green-50';
+    if (score >= 60) return 'border-yellow-500 bg-yellow-50';
+    return 'border-red-500 bg-red-50';
+  };
+
+  const getDemandColor = (demand: string) => {
+    switch (demand?.toLowerCase()) {
+      case 'high': return 'bg-green-100 text-green-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      case 'low': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Generate position recommendations
+  const handleGenerateCareerProfile = async () => {
+    // Use stored position recommendations if available
+    if (analysis.positionRecommendations && analysis.positionRecommendations.length > 0) {
+      const formattedPositions = analysis.positionRecommendations.map(pos => ({
+        position: pos.position,
+        successProbability: pos.successProbability,
+        reasons: pos.reasons,
+        skillMatch: pos.skillMatch,
+        salaryRange: pos.salaryRange,
+        marketDemand: pos.marketDemand,
+        immigrantFriendly: pos.immigrantFriendly,
+        requiredSkills: pos.requiredSkills,
+        recommendedActions: pos.skillGaps?.map(gap => `Improve ${gap}`) || []
+      }));
+      setPositions(formattedPositions);
+      setShowPositionModal(true);
+      return;
+    }
+
+    // Use existing target industries from Canadian Market Analysis
+    if (targetIndustries.length > 0) {
+      const industryBasedPositions = targetIndustries.map((industry, index) => ({
+        position: `${industry} Professional`,
+        successProbability: 75 + (index * 5), // Slightly different scores for each
+        reasons: [
+          `Strong alignment with ${industry} sector`,
+          'Canadian market demand for this industry',
+          'Your skills match industry requirements'
+        ],
+        skillMatch: 80 - (index * 5), // Slightly decreasing skill match
+        salaryRange: canadianMarketAnalysis.salaryRangeEstimate || '$60,000 - $85,000 CAD',
+        marketDemand: index === 0 ? 'High' : index === 1 ? 'Medium-High' : 'Medium',
+        immigrantFriendly: true,
+        requiredSkills: skills.technical?.slice(0, 5) || ['Professional skills', 'Communication', 'Technical expertise'],
+        recommendedActions: recommendedImprovements.slice(0, 3) || ['Gain Canadian work experience', 'Network within the industry', 'Obtain relevant certifications']
+      }));
+      
+      setPositions(industryBasedPositions);
+      setShowPositionModal(true);
+      return;
+    }
+
+    // If no target industries or position recommendations available, show message
+    alert('No career recommendations available. Please ensure your resume has been properly analyzed.');
+  };
+
+  // Generate enhanced profile for selected position
+  const handleSelectPosition = async (position: PositionRecommendation) => {
+    try {
+      setSelectedPosition(position);
+      setLoadingProfile(true);
+
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/protected/ai-local/career-profile/enhanced-profile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          targetPosition: position,
+          resumeAnalysis: analysis
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Enhanced profile response:', data);
+        // The backend returns enhancedProfile in data.data.enhancedProfile
+        setEnhancedProfile(data.data?.enhancedProfile || data.enhancedProfile);
+      } else {
+        const errorText = await response.text();
+        console.error('Failed to generate enhanced profile. Status:', response.status, 'Response:', errorText);
+        alert('Failed to generate enhanced profile. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error generating enhanced profile:', error);
+      alert('Error generating enhanced profile. Please try again.');
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
+  const closeModal = () => {
+    setShowPositionModal(false);
+    setPositions([]);
+    setSelectedPosition(null);
+    setEnhancedProfile(null);
+    setLoadingPositions(false);
+    setLoadingProfile(false);
   };
 
   return (
@@ -290,14 +525,14 @@ const ResumeAnalysisDetail: React.FC<ResumeAnalysisDetailProps> = ({ analysis, o
         </CardContent>
       </Card>
 
-      {/* Canadian Market Analysis */}
-      <Card>
+      {/* Canadian Market Analysis Card */}
+      <Card className="bg-gradient-to-br from-green-50 to-blue-50 border-green-200">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Star className="w-5 h-5" />
+          <CardTitle className="flex items-center space-x-2 text-green-800">
+            <Globe className="w-6 h-6" />
             <span>Canadian Market Analysis</span>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-green-700">
             How well your resume aligns with the Canadian job market
           </CardDescription>
         </CardHeader>
@@ -703,10 +938,21 @@ const ResumeAnalysisDetail: React.FC<ResumeAnalysisDetailProps> = ({ analysis, o
           <h3 className="font-semibold text-blue-900 mb-4">Next Steps</h3>
           <div className="flex flex-wrap gap-3">
             <Button 
-              onClick={() => window.location.href = '/dashboard/user/ai/profile'}
+              onClick={handleGenerateCareerProfile}
               className="bg-blue-600 hover:bg-blue-700"
+              disabled={loadingPositions || (targetIndustries.length === 0 && (!analysis.positionRecommendations || analysis.positionRecommendations.length === 0))}
             >
-              Generate Career Profile
+              {loadingPositions ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Generating Recommendations...
+                </>
+              ) : (
+                <>
+                  <Target className="w-4 h-4 mr-2" />
+                  View Career Profile
+                </>
+              )}
             </Button>
             <Button 
               variant="outline"
@@ -724,6 +970,252 @@ const ResumeAnalysisDetail: React.FC<ResumeAnalysisDetailProps> = ({ analysis, o
           </div>
         </CardContent>
       </Card>
+
+      {/* Position Recommendations Modal */}
+      {showPositionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Career Path Recommendations</h2>
+              <Button onClick={closeModal} variant="ghost" size="sm">
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="p-6">
+              {!enhancedProfile ? (
+                <>
+                  <p className="text-gray-600 mb-6">
+                    Based on your resume analysis, here are the most suitable career paths in Canada:
+                  </p>
+
+                  {loadingPositions ? (
+                    <div className="text-center py-12">
+                      <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+                      <p className="text-gray-600">Analyzing your profile and generating recommendations...</p>
+                    </div>
+                  ) : (
+                    <div className="grid gap-4">
+                      {positions.map((position, index) => (
+                        <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleSelectPosition(position)}>
+                          <CardContent className="p-6">
+                            <div className="flex items-start justify-between mb-4">
+                              <div className="flex-1">
+                                <h3 className="text-xl font-semibold text-gray-900 mb-2">{position.position}</h3>
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                  {position.immigrantFriendly && (
+                                    <Badge className="bg-green-100 text-green-800">
+                                      <Globe className="w-3 h-3 mr-1" />
+                                      Immigrant Friendly
+                                    </Badge>
+                                  )}
+                                  <Badge className={getDemandColor(position.marketDemand)}>
+                                    {position.marketDemand} Demand
+                                  </Badge>
+                                  <Badge variant="outline">
+                                    <DollarSign className="w-3 h-3 mr-1" />
+                                    {position.salaryRange}
+                                  </Badge>
+                                </div>
+                              </div>
+                              <div className="text-right ml-4">
+                                <div className="text-3xl font-bold text-blue-600 mb-1">
+                                  {position.successProbability}%
+                                </div>
+                                <p className="text-sm text-gray-500">Success Rate</p>
+                              </div>
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-4 mb-4">
+                              <div>
+                                <h4 className="font-medium text-gray-900 mb-2">Why This Matches:</h4>
+                                <ul className="text-sm text-gray-600 space-y-1">
+                                  {position.reasons.slice(0, 3).map((reason, idx) => (
+                                    <li key={idx} className="flex items-start">
+                                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                                      {reason}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <h4 className="font-medium text-gray-900 mb-2">Key Skills Match:</h4>
+                                <div className="flex items-center mb-2">
+                                  <Progress value={position.skillMatch} className="flex-1 mr-3" />
+                                  <span className="text-sm font-medium">{position.skillMatch}%</span>
+                                </div>
+                                <div className="flex flex-wrap gap-1">
+                                  {position.requiredSkills.slice(0, 4).map((skill, idx) => (
+                                    <Badge key={idx} variant="secondary" className="text-xs">
+                                      {skill}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between pt-4 border-t">
+                              <p className="text-sm text-gray-500">Click to generate detailed career profile</p>
+                              <ArrowRight className="w-4 h-4 text-blue-600" />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="space-y-6">
+                  {loadingProfile ? (
+                    <div className="text-center py-12">
+                      <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+                      <p className="text-gray-600">Generating your personalized career profile...</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="text-center mb-6">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                          Career Profile: {enhancedProfile.optimized_profile?.professional_title}
+                        </h3>
+                        <p className="text-gray-600">{enhancedProfile.optimized_profile?.elevator_pitch}</p>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="flex items-center space-x-2">
+                              <CheckCircle className="w-5 h-5 text-green-600" />
+                              <span>Your Current Strengths</span>
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <ul className="space-y-2">
+                              {enhancedProfile.skills_positioning?.primary_skills?.map((skill, index) => (
+                                <li key={index} className="flex items-start space-x-2">
+                                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                                  <span className="text-sm">{skill.skill}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
+
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="flex items-center space-x-2">
+                              <AlertCircle className="w-5 h-5 text-orange-600" />
+                              <span>Skills to Develop</span>
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <ul className="space-y-2">
+                              {enhancedProfile.skills_positioning?.skill_development_plan?.map((skill, index) => (
+                                <li key={index} className="flex items-start space-x-2">
+                                  <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                                  <span className="text-sm">{skill.skill}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
+
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="flex items-center space-x-2">
+                              <Target className="w-5 h-5 text-blue-600" />
+                              <span>Action Plan</span>
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <ul className="space-y-2">
+                              {enhancedProfile["90_day_action_plan"]?.week_1_2?.map((action, index) => (
+                                <li key={index} className="flex items-start space-x-2">
+                                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                  <span className="text-sm">{action}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
+
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="flex items-center space-x-2">
+                              <Award className="w-5 h-5 text-purple-600" />
+                              <span>Canadian Certifications</span>
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <ul className="space-y-2">
+                              {enhancedProfile.skills_positioning?.primary_skills?.map((skill, index) => (
+                                <li key={index} className="flex items-start space-x-2">
+                                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                                  <span className="text-sm">{skill.skill}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Timeline & Salary Progression</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              <div>
+                                <p className="text-sm font-medium text-gray-700">Expected Timeline:</p>
+                                <p className="text-sm text-gray-600">{enhancedProfile["90_day_action_plan"]?.month_1}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-gray-700">Salary Progression:</p>
+                                <p className="text-sm text-gray-600">{enhancedProfile.optimized_profile?.value_proposition}</p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Market Outlook</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-gray-600">{enhancedProfile.optimized_profile?.value_proposition}</p>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Networking Strategy</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <ul className="space-y-2">
+                            {enhancedProfile.application_strategy?.networking_approach?.target_professionals?.map((strategy, index) => (
+                              <li key={index} className="flex items-start space-x-2">
+                                <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <span className="text-sm">{strategy}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+
+                      <div className="flex justify-center">
+                        <Button onClick={closeModal} className="bg-blue-600 hover:bg-blue-700">
+                          Done
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

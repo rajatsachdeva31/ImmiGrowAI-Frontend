@@ -15,15 +15,17 @@ const AIFeaturesPanel = () => {
       description: 'AI-powered resume analysis and auto-fill',
       icon: '📄',
       color: 'border-blue-200 bg-blue-50',
-      benefits: ['Extract work experience', 'Identify skills', 'Canadian market analysis']
+      benefits: ['Extract work experience', 'Identify skills', 'Canadian market analysis'],
+      route: '/dashboard/user/ai/resume'
     },
     {
       id: 'profile',
-      title: 'Career Profile',
-      description: 'Generate comprehensive career profile',
-      icon: '👤',
+      title: 'Career Profile Generator',
+      description: 'Generate tailored career profiles with position recommendations',
+      icon: '🎯',
       color: 'border-green-200 bg-green-50',
-      benefits: ['Professional summary', 'Skills categorization', 'Career objectives']
+      benefits: ['Position recommendations', 'Success probability analysis', 'Enhanced profile generation'],
+      route: '/dashboard/user/ai/career-profile'
     },
     {
       id: 'mentors',
@@ -31,7 +33,8 @@ const AIFeaturesPanel = () => {
       description: 'AI-powered mentor matching',
       icon: '👥',
       color: 'border-purple-200 bg-purple-50',
-      benefits: ['Industry experts', 'Cultural guidance', 'Career advice']
+      benefits: ['Industry experts', 'Cultural guidance', 'Career advice'],
+      route: '/dashboard/user/ai/mentors'
     },
     {
       id: 'coaching',
@@ -39,7 +42,8 @@ const AIFeaturesPanel = () => {
       description: 'Personalized career guidance',
       icon: '💬',
       color: 'border-orange-200 bg-orange-50',
-      benefits: ['Interview prep', 'Skill development', 'Networking tips']
+      benefits: ['Interview prep', 'Skill development', 'Networking tips'],
+      route: '/dashboard/user/ai/coaching'
     },
     {
       id: 'jobs',
@@ -47,7 +51,8 @@ const AIFeaturesPanel = () => {
       description: 'Find matching job opportunities',
       icon: '🔍',
       color: 'border-cyan-200 bg-cyan-50',
-      benefits: ['Smart matching', 'Compatibility scores', 'Job alerts']
+      benefits: ['Smart matching', 'Compatibility scores', 'Job alerts'],
+      route: '/dashboard/user/ai/jobs'
     },
     {
       id: 'skills',
@@ -55,7 +60,8 @@ const AIFeaturesPanel = () => {
       description: 'Identify and bridge skill gaps',
       icon: '📈',
       color: 'border-yellow-200 bg-yellow-50',
-      benefits: ['Gap identification', 'Learning path', 'Progress tracking']
+      benefits: ['Gap identification', 'Learning path', 'Progress tracking'],
+      route: '/dashboard/user/ai/skills'
     }
   ];
 
@@ -90,7 +96,9 @@ const AIFeaturesPanel = () => {
                   <span className="text-2xl">{feature.icon}</span>
                   <div>
                     <CardTitle className="text-lg">{feature.title}</CardTitle>
-                    <Badge variant="secondary" className="text-xs">Available</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {feature.id === 'profile' || feature.id === 'resume' ? 'Available' : 'Coming Soon'}
+                    </Badge>
                   </div>
                 </div>
               </div>
@@ -114,17 +122,15 @@ const AIFeaturesPanel = () => {
                   <Button 
                     size="sm" 
                     className="w-full mt-3"
+                    disabled={feature.id !== 'profile' && feature.id !== 'resume'}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Handle feature navigation
-                      if (feature.id === 'resume') {
-                        window.location.href = '/dashboard/user/ai/resume';
-                      } else {
-                        window.location.href = `/dashboard/user/ai/${feature.id}`;
+                      if (feature.id === 'profile' || feature.id === 'resume') {
+                        window.location.href = feature.route;
                       }
                     }}
                   >
-                    Get Started
+                    {feature.id === 'profile' || feature.id === 'resume' ? 'Get Started' : 'Coming Soon'}
                   </Button>
                 </div>
               </CardContent>
@@ -137,7 +143,7 @@ const AIFeaturesPanel = () => {
         <h3 className="font-semibold text-blue-900 mb-2">🚀 Get Started</h3>
         <p className="text-blue-800 text-sm mb-4">
           Begin your AI-powered career journey by uploading your resume for analysis, 
-          or start with our career coaching assistant.
+          or generate a tailored career profile with position recommendations.
         </p>
         <div className="flex flex-wrap gap-3">
           <Button 
@@ -147,11 +153,17 @@ const AIFeaturesPanel = () => {
             Upload Resume
           </Button>
           <Button 
-            variant="outline" 
-            onClick={() => window.location.href = '/dashboard/user/ai/coaching'}
-            className="border-blue-600 text-blue-600 hover:bg-blue-50"
+            onClick={() => window.location.href = '/dashboard/user/ai/career-profile'}
+            className="bg-green-600 hover:bg-green-700"
           >
-            Start Coaching
+            Career Profile
+          </Button>
+          <Button 
+            variant="outline" 
+            disabled
+            className="border-blue-600 text-blue-600"
+          >
+            More Features Coming Soon
           </Button>
         </div>
       </div>
